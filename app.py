@@ -54,18 +54,9 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
-static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
 
-# function for create tmp dir for download content
-def make_static_tmp_dir():
-    try:
-        os.makedirs(static_tmp_path)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(static_tmp_path):
-            pass
-        else:
-            raise
+
 
 
 @app.route("/callback", methods=['POST'])
@@ -255,5 +246,5 @@ def handle_beacon(event):
 
 
 if __name__ == "__main__":
-	make_static_tmp_dir()
+
     app.run(host='0.0.0.0',port=os.environ['PORT'])
