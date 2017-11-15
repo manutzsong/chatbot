@@ -32,8 +32,8 @@ from linebot.models import (
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
-channel_secret = os.getenv('63efbc2b1de481db60cebcda66f8a6f2', None)
-channel_access_token = os.getenv('dZnflRA5ac/U2hZ/Ado81F+t0H8yobXp2IbezUD9ONlaALDmhQED++LxMt9LU2/HX8b4SjSvbgemXAY+cF9uziWIhYLYzyU9uKCBAXMlXY4AISmxnlOzrx0DLnR9a6r/duACcHSjRxCNsZqGNCqL3gdB04t89/1O/w1cDnyilFU=', None)
+channel_secret = '63efbc2b1de481db60cebcda66f8a6f2'
+channel_access_token = 'dZnflRA5ac/U2hZ/Ado81F+t0H8yobXp2IbezUD9ONlaALDmhQED++LxMt9LU2/HX8b4SjSvbgemXAY+cF9uziWIhYLYzyU9uKCBAXMlXY4AISmxnlOzrx0DLnR9a6r/duACcHSjRxCNsZqGNCqL3gdB04t89/1O/w1cDnyilFU='
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
     sys.exit(1)
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
     )
-    arg_parser.add_argument('-p', '--port', default=8000, help='port')
+    arg_parser.add_argument('-p', '--port', default=80, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
