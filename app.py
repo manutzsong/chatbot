@@ -21,6 +21,8 @@ import tempfile
 import apiai
 import json
 
+import pymysql
+
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -42,6 +44,8 @@ from linebot.models import (
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
 
+
+
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
@@ -61,6 +65,17 @@ handler = WebhookHandler(channel_secret)
 CLIENT_ACCESS_TOKEN = '37f9249f8aea441083ad7647807be5ee'
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
+
+
+
+#MYSQL
+conn = pymysql.connect(host='songpurin.me', port=3306, user='rent', passwd='12345678', db='saveme')
+cur = conn.cursor()
+
+found_it = 0
+#MYSQL
+
+
 
 
 # function for create tmp dir for download content
@@ -91,10 +106,11 @@ def callback():
     return 'OK'
 
 
+    
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
-
+    
     if text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
@@ -166,95 +182,230 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
     elif text == 'imagemap':
         pass
-    else:
-        ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
-
-        request = ai.text_request()
-
-        request.lang = 'en'  # optional, default value equal 'en'
-
-        request.session_id = event.source.user_id
-        print(event.source.user_id)
-
-        request.query = text
-
-        # Receiving the response.
-        response = json.loads(request.getresponse().read().decode('utf-8'))
-        responseStatus = response['status']['code']
-
-        #speech_this = response['result']['fulfillment']['speech']
+    elif text == '!unmute':
+        #DELETE FROM `mute` WHERE `mute`.`id` = 1
+        sql = "DELETE FROM `mute` WHERE group_id = %s"
+        cur.execute(sql, (event.source.group_id,))
+        line_bot_api.reply_message(
+                    event.reply_token,
+                    TextMessage(text="Unmute Successful"))
+        conn.commit()
+        cur.close()
+        conn.close()
         
-        #print(fulfillment)
-        #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
-        try:
-            if response['result']['fulfillment']['messages'][0]['payload']['type'] == 'location':
-                title_load = response['result']['fulfillment']['messages'][0]['payload']['title']
-                address_load = response['result']['fulfillment']['messages'][0]['payload']['address']
-                lat_load = response['result']['fulfillment']['messages'][0]['payload']['lat']
-                lon_load = response['result']['fulfillment']['messages'][0]['payload']['lon']
+    elif text == '!mute':
+        if isinstance(event.source, SourceGroup):
+            #event.source.group_id
+            sql2 = "SELECT * FROM `mute` WHERE `group_id`=%s"
+            cur.execute(sql2, (event.source.group_id,))
+            if not cur.rowcount:
+                #INSERT INTO `register` (`id`, `uid`, `date_create`) VALUES (NULL, '1', CURRENT_TIMESTAMP);
+                sql = "INSERT INTO `mute` (`id`, `group_id`, `date_create`) VALUES (NULL, %s, CURRENT_TIMESTAMP)"
+                cur.execute(sql, (event.source.group_id))
+                conn.commit()
                 line_bot_api.reply_message(
-                        event.reply_token, LocationSendMessage(title=title_load, address=address_load, latitude=lat_load, longitude=lon_load))
+                        event.reply_token,
+                        TextMessage(text="Mute LOL"))
 
-            elif response['result']['fulfillment']['messages'][0]['payload']['type'] == 'image':
+
+                
+            else:
                 line_bot_api.reply_message(
-                    event.reply_token, ImageSendMessage(
-                        original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
-                        preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
-                    )
-        except Exception as e:
-            maybe = response['result']['fulfillment']['messages'][0]['speech']
+                    event.reply_token,
+                    TextMessage(text="Already Mute"))
+                
+            cur.close()
+            conn.close()
+                
+        else:
             line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text=maybe))
+                        event.reply_token,
+                        TextMessage(text="Aint group bro"))
+
+    elif text =='!check':
+        sql2 = "SELECT * FROM `register` WHERE `uid`=%s"
+        cur.execute(sql2, (event.source.user_id,))
+        if cur.rowcount:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Exist"))
+            cur.close()
+            conn.close()
+    
+    elif text == '!register':
+        sql2 = "SELECT * FROM `register` WHERE `uid`=%s"
+        cur.execute(sql2, (event.source.user_id,))
+        if not cur.rowcount:
+            #INSERT INTO `register` (`id`, `uid`, `date_create`) VALUES (NULL, '1', CURRENT_TIMESTAMP);
+            sql = "INSERT INTO `register` (`id`, `uid`, `date_create`) VALUES (NULL, %s, CURRENT_TIMESTAMP)"
+            cur.execute(sql, (event.source.user_id))
+            conn.commit()
+            line_bot_api.reply_message(
+                    event.reply_token,
+                    TextMessage(text="Register your ID"))
+            cur.close()
+            conn.close()
+            
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Already Register"))
+            cur.close()
+            conn.close()
+
+        
+    else:
+        if isinstance(event.source, SourceGroup):
+            sql2 = "SELECT * FROM `mute` WHERE `group_id`=%s"
+            cur.execute(sql2, (event.source.group_id,))
+            if cur.rowcount == 0:
+                
+                ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
+
+                request = ai.text_request()
+
+                request.lang = 'en'  # optional, default value equal 'en'
+
+                request.session_id = event.source.user_id
+                print(event.source.user_id)
+
+                request.query = text
+
+                # Receiving the response.
+                response = json.loads(request.getresponse().read().decode('utf-8'))
+                responseStatus = response['status']['code']
+
+                #speech_this = response['result']['fulfillment']['speech']
+                
+                #print(fulfillment)
+                #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
+                try:
+                    if response['result']['fulfillment']['messages'][0]['payload']['type'] == 'location':
+                        title_load = response['result']['fulfillment']['messages'][0]['payload']['title']
+                        address_load = response['result']['fulfillment']['messages'][0]['payload']['address']
+                        lat_load = response['result']['fulfillment']['messages'][0]['payload']['lat']
+                        lon_load = response['result']['fulfillment']['messages'][0]['payload']['lon']
+                        line_bot_api.reply_message(
+                                event.reply_token, LocationSendMessage(title=title_load, address=address_load, latitude=lat_load, longitude=lon_load))
+
+                    elif response['result']['fulfillment']['messages'][0]['payload']['type'] == 'image':
+                        line_bot_api.reply_message(
+                            event.reply_token, ImageSendMessage(
+                                original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
+                                preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
+                            )
+                except Exception as e:
+                    maybe = response['result']['fulfillment']['messages'][0]['speech']
+                    line_bot_api.reply_message(
+                        event.reply_token, TextSendMessage(text=maybe))
+            else:
+                line_bot_api.reply_message(
+                    event.reply_token, TextSendMessage(text='Unmute me first with command !unmute '))
 
 
-@handler.add(MessageEvent, message=LocationMessage)
-def handle_location_message(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        LocationSendMessage(
-            title=event.message.title, address=event.message.address,
-            latitude=event.message.latitude, longitude=event.message.longitude
-        )
-    )
+            cur.close()
+            conn.close()
+                
+        else:
+            ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
+
+            request = ai.text_request()
+
+            request.lang = 'en'  # optional, default value equal 'en'
+
+            request.session_id = event.source.user_id
+            print(event.source.user_id)
+
+            request.query = text
+
+            # Receiving the response.
+            response = json.loads(request.getresponse().read().decode('utf-8'))
+            responseStatus = response['status']['code']
+
+            #speech_this = response['result']['fulfillment']['speech']
+            
+            #print(fulfillment)
+            #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
+            try:
+                if response['result']['fulfillment']['messages'][0]['payload']['type'] == 'location':
+                    title_load = response['result']['fulfillment']['messages'][0]['payload']['title']
+                    address_load = response['result']['fulfillment']['messages'][0]['payload']['address']
+                    lat_load = response['result']['fulfillment']['messages'][0]['payload']['lat']
+                    lon_load = response['result']['fulfillment']['messages'][0]['payload']['lon']
+                    line_bot_api.reply_message(
+                            event.reply_token, LocationSendMessage(title=title_load, address=address_load, latitude=lat_load, longitude=lon_load))
+
+                elif response['result']['fulfillment']['messages'][0]['payload']['type'] == 'image':
+                    line_bot_api.reply_message(
+                        event.reply_token, ImageSendMessage(
+                            original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
+                            preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
+                        )
+            except Exception as e:
+                maybe = response['result']['fulfillment']['messages'][0]['speech']
+                line_bot_api.reply_message(
+                    event.reply_token, TextSendMessage(text=maybe))
 
 
-@handler.add(MessageEvent, message=StickerMessage)
-def handle_sticker_message(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        StickerSendMessage(
-            package_id=event.message.package_id,
-            sticker_id=event.message.sticker_id)
-    )
+##    @handler.add(MessageEvent, message=LocationMessage)
+##    def handle_location_message(event):
+##        line_bot_api.reply_message(
+##            event.reply_token,
+##            LocationSendMessage(
+##                title=event.message.title, address=event.message.address,
+##                latitude=event.message.latitude, longitude=event.message.longitude
+##            )
+##        )
+##
+##
+##    @handler.add(MessageEvent, message=StickerMessage)
+##    def handle_sticker_message(event):
+##        line_bot_api.reply_message(
+##            event.reply_token,
+##            StickerSendMessage(
+##                package_id=event.message.package_id,
+##                sticker_id=event.message.sticker_id)
+##        )
 
 
 # Other Message Type
 @handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 def handle_content_message(event):
-    if isinstance(event.message, ImageMessage):
-        ext = 'jpg'
-    elif isinstance(event.message, VideoMessage):
-        ext = 'mp4'
-    elif isinstance(event.message, AudioMessage):
-        ext = 'm4a'
+    sql2 = "SELECT * FROM `register` WHERE `uid`=%s"
+    cur.execute(sql2, (event.source.user_id,))
+
+    
+    if cur.rowcount:
+        
+        if isinstance(event.message, ImageMessage):
+            ext = 'jpg'
+        elif isinstance(event.message, VideoMessage):
+            ext = 'mp4'
+        elif isinstance(event.message, AudioMessage):
+            ext = 'm4a'
+        else:
+            return
+
+        message_content = line_bot_api.get_message_content(event.message.id)
+        with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
+            for chunk in message_content.iter_content():
+                tf.write(chunk)
+            tempfile_path = tf.name
+
+        dist_path = tempfile_path + '.' + ext
+        dist_name = os.path.basename(dist_path)
+        os.rename(tempfile_path, dist_path)
+
+        line_bot_api.reply_message(
+            event.reply_token, [
+                TextSendMessage(text='Save content.'),
+                TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
+            ])
+        
     else:
-        return
-
-    message_content = line_bot_api.get_message_content(event.message.id)
-    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
-        for chunk in message_content.iter_content():
-            tf.write(chunk)
-        tempfile_path = tf.name
-
-    dist_path = tempfile_path + '.' + ext
-    dist_name = os.path.basename(dist_path)
-    os.rename(tempfile_path, dist_path)
-
-    line_bot_api.reply_message(
-        event.reply_token, [
-            TextSendMessage(text='Save content.'),
-            TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
-        ])
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Not allow to use this feature"))
 
 
 @handler.add(FollowEvent)
@@ -296,5 +447,11 @@ def handle_beacon(event):
 
 
 if __name__ == "__main__":
+
+        
+            
     make_static_tmp_dir()
+
     app.run(host='0.0.0.0',port=os.environ['PORT'])
+    
+    
