@@ -175,26 +175,21 @@ def handle_text_message(event):
         
         #print(fulfillment)
         #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
-        try:
-            if response['result']['metadata']['intentName'] == 'About-Location':
-                line_bot_api.reply_message(
-                    event.reply_token, LocationSendMessage(title='Location of Assumption University', address='88 Moo 8 Bang Na-Trad Km. 26 Bangsaothong, Samuthprakarn Thailand 10570', latitude='13.601312', longitude='100.847133'))
-            else:
-                #Handle Custom Payload
-                try: 
-                    response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl']
-                    line_bot_api.reply_message(
-                        event.reply_token, ImageSendMessage(
-                            original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
-                            preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
-                        )
-                except Exception as e:
-                    maybe = response['result']['fulfillment']['messages'][0]['speech']
-                    line_bot_api.reply_message(
-                        event.reply_token, TextSendMessage(text=maybe))
-            
-                
-        except Exception as e:
+        if response['result']['fulfillment']['messages'][0]['payload']['type'] == 'location':
+            title_load = response['result']['fulfillment']['messages'][0]['payload']['title']
+            address_load = response['result']['fulfillment']['messages'][0]['payload']['address']
+            lat_load = response['result']['fulfillment']['messages'][0]['payload']['lat']
+            lon_load = response['result']['fulfillment']['messages'][0]['payload']['lon']
+            line_bot_api.reply_message(
+                    event.reply_token, LocationSendMessage(title=title_load, address=address_load, latitude=lat_load, longitude=lon_load))
+
+        elif response['result']['fulfillment']['messages'][0]['payload']['type'] == 'image':
+            line_bot_api.reply_message(
+                event.reply_token, ImageSendMessage(
+                    original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
+                    preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
+                )
+        else:
             maybe = response['result']['fulfillment']['messages'][0]['speech']
             line_bot_api.reply_message(
                 event.reply_token, TextSendMessage(text=maybe))
