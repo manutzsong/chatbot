@@ -18,6 +18,9 @@ import errno
 import os
 import sys
 import tempfile
+import apiai
+import json
+
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -55,7 +58,7 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
 
-
+CLIENT_ACCESS_TOKEN = '37f9249f8aea441083ad7647807be5ee'
 
 
 
@@ -153,8 +156,48 @@ def handle_text_message(event):
     elif text == 'imagemap':
         pass
     else:
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text=event.message.text))
+        ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
+
+        request = ai.text_request()
+
+        request.lang = 'en'  # optional, default value equal 'en'
+
+        request.session_id = event.source.user_id
+        print(event.source.user_id)
+
+        request.query = text
+
+        # Receiving the response.
+        response = json.loads(request.getresponse().read().decode('utf-8'))
+        responseStatus = response['status']['code']
+
+        #speech_this = response['result']['fulfillment']['speech']
+        
+        #print(fulfillment)
+        #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
+        try:
+            if response['result']['metadata']['intentName'] == 'About-Location':
+                line_bot_api.reply_message(
+                    event.reply_token, LocationSendMessage(title='Location of Assumption University', address='88 Moo 8 Bang Na-Trad Km. 26 Bangsaothong, Samuthprakarn Thailand 10570', latitude='13.601312', longitude='100.847133'))
+            else:
+                #Handle Custom Payload
+                try: 
+                    response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl']
+                    line_bot_api.reply_message(
+                        event.reply_token, ImageSendMessage(
+                            original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
+                            preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
+                        )
+                except Exception as e:
+                    maybe = response['result']['fulfillment']['messages'][0]['speech']
+                    line_bot_api.reply_message(
+                        event.reply_token, TextSendMessage(text=maybe))
+            
+                
+        except Exception as e:
+            maybe = response['result']['fulfillment']['messages'][0]['speech']
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text=maybe))
 
 
 @handler.add(MessageEvent, message=LocationMessage)
