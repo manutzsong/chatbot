@@ -11,6 +11,7 @@ Small project for MIS major.
 apt-get update
 apt-get install python-pip3
 apt-get install nginx
+apt-get supervisor
 
 apt-get install mysql
 apt-get install phpmyadmin
@@ -60,13 +61,15 @@ nano /etc/nginx/sites-available/default
 		deny all;
 	}
 ```
-
+Restart service
+```
 service nginx restart
+```
 
 ### Install Cert for HTTPs
 
 ```
-certbot --nginx -d urdomain.com
+	certbot --nginx -d urdomain.com
 ```
 
 
@@ -81,14 +84,15 @@ git clone https://github.com/manutzsong/chatbot
 
 ```
 mysql -u root -p
-create database saveme ** or whatever name you like **
+create database saveme //or whatever name you like
 use saveme
-source saveme.sql **database file location **
+source saveme.sql //database file location
 ```
 
 ### Link phpmyadmin
-ln -s /usr/share/phpmyadmin /var/www/html ---- Link phpmyadmin to www
-
+```
+	ln -s /usr/share/phpmyadmin /var/www/html ---- Link phpmyadmin to www
+```
 
 
 ### Edit LINE API Key and Dialogflow API Key
@@ -115,29 +119,40 @@ nano app.py
 ### Install requirements.txt		
 	
 ```	
-pip3 install -r requirements.txt
+	pip3 install -r requirements.txt
 ```
 
-gunicorn -b 127.0.0.1 app:app
 
-apt-get supervisor
 
-move chatbot.conf to /etc/supervisor/conf.d
 
-nano chatbot.connf
---edit directory to app.py
 
-supervisorctl add chatbot
-supervisorctl update
+## Config Supervisor
 
-supervisorctl restart chatbot
+	* move chatbot.conf to /etc/supervisor/conf.d
+	
+	* Edit .conf
+	
+		- nano chatbot.connf
+		- edit directory to app.py
 
-************
-Edit LINE Developer Webhook URL to
+		
+	* Run command to add ,update, restart
+	
+		```
+		supervisorctl add chatbot
+		supervisorctl update
+		supervisorctl restart chatbot
+		```
 
-https://urdomain.com/line/callback
 
-DONE
+
+## Edit LINE Webhook
+	
+	* Edit it to your url
+
+		```https://urdomain.com/line/callback```
+
+###DONE
 
 ## Test
 
