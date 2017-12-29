@@ -68,13 +68,13 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
 
 
-#MYSQL
-conn = pymysql.connect(host='songpurin.me', port=3306, user='rent', passwd='12345678', db='saveme')
-cur = conn.cursor()
+
 
 found_it = 0
 #MYSQL
-
+#MYSQL
+conn = pymysql.connect(host='songpurin.me', port=3306, user='rent', passwd='12345678', db='saveme')
+cur = conn.cursor()
 
 
 
@@ -97,6 +97,8 @@ def callback():
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
+    
+    
     # handle webhook body
     try:
         handler.handle(body, signature)
@@ -190,19 +192,23 @@ def handle_text_message(event):
                     event.reply_token,
                     TextMessage(text="Unmute Successful"))
         conn.commit()
-        cur.close()
-        conn.close()
+        
+        
         
     elif text == '!mute':
         if isinstance(event.source, SourceGroup):
             #event.source.group_id
-            sql2 = "SELECT * FROM `mute` WHERE `group_id`=%s"
-            cur.execute(sql2, (event.source.group_id,))
+            sql1 = "SELECT * FROM `mute` WHERE `group_id`=%s"
+            cur.execute(sql1, (event.source.group_id,))
             if not cur.rowcount:
                 #INSERT INTO `register` (`id`, `uid`, `date_create`) VALUES (NULL, '1', CURRENT_TIMESTAMP);
                 sql = "INSERT INTO `mute` (`id`, `group_id`, `date_create`) VALUES (NULL, %s, CURRENT_TIMESTAMP)"
                 cur.execute(sql, (event.source.group_id))
                 conn.commit()
+
+                
+                
+            
                 line_bot_api.reply_message(
                         event.reply_token,
                         TextMessage(text="Mute LOL"))
@@ -210,12 +216,13 @@ def handle_text_message(event):
 
                 
             else:
+                
+                
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextMessage(text="Already Mute"))
                 
-            cur.close()
-            conn.close()
+            
                 
         else:
             line_bot_api.reply_message(
@@ -223,14 +230,14 @@ def handle_text_message(event):
                         TextMessage(text="Aint group bro"))
 
     elif text =='!check':
-        sql2 = "SELECT * FROM `register` WHERE `uid`=%s"
-        cur.execute(sql2, (event.source.user_id,))
+        sql3 = "SELECT * FROM `register` WHERE `uid`=%s"
+        cur.execute(sql3, (event.source.user_id,))
         if cur.rowcount:
             line_bot_api.reply_message(
                 event.reply_token,
                 TextMessage(text="Exist"))
-            cur.close()
-            conn.close()
+            
+            
     
     elif text == '!register':
         sql2 = "SELECT * FROM `register` WHERE `uid`=%s"
@@ -243,21 +250,22 @@ def handle_text_message(event):
             line_bot_api.reply_message(
                     event.reply_token,
                     TextMessage(text="Register your ID"))
-            cur.close()
-            conn.close()
+            
+            
             
         else:
             line_bot_api.reply_message(
                 event.reply_token,
                 TextMessage(text="Already Register"))
-            cur.close()
-            conn.close()
+            
+            
 
         
     else:
         if isinstance(event.source, SourceGroup):
-            sql2 = "SELECT * FROM `mute` WHERE `group_id`=%s"
-            cur.execute(sql2, (event.source.group_id,))
+            
+            sql4 = "SELECT * FROM `mute` WHERE `group_id`=%s"
+            cur.execute(sql4, (event.source.group_id,))
             if cur.rowcount == 0:
                 
                 ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
@@ -279,7 +287,13 @@ def handle_text_message(event):
                 
                 #print(fulfillment)
                 #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
+
+                
+                
                 try:
+                    
+                    
+
                     if response['result']['fulfillment']['messages'][0]['payload']['type'] == 'location':
                         title_load = response['result']['fulfillment']['messages'][0]['payload']['title']
                         address_load = response['result']['fulfillment']['messages'][0]['payload']['address']
@@ -299,13 +313,14 @@ def handle_text_message(event):
                     line_bot_api.reply_message(
                         event.reply_token, TextSendMessage(text=maybe))
             else:
+                
+                
+                
                 line_bot_api.reply_message(
                     event.reply_token, TextSendMessage(text='Unmute me first with command !unmute '))
 
 
-            cur.close()
-            conn.close()
-                
+            
         else:
             ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 
@@ -371,8 +386,8 @@ def handle_text_message(event):
 # Other Message Type
 @handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 def handle_content_message(event):
-    sql2 = "SELECT * FROM `register` WHERE `uid`=%s"
-    cur.execute(sql2, (event.source.user_id,))
+    sql7 = "SELECT * FROM `register` WHERE `uid`=%s"
+    cur.execute(sql7, (event.source.user_id,))
 
     
     if cur.rowcount:
@@ -402,7 +417,11 @@ def handle_content_message(event):
                 TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
             ])
         
+        
+        
     else:
+        
+        
         line_bot_api.reply_message(
                 event.reply_token,
                 TextMessage(text="Not allow to use this feature"))
@@ -447,6 +466,7 @@ def handle_beacon(event):
 
 
 if __name__ == "__main__":
+    
 
         
             
