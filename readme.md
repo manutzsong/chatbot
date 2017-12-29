@@ -6,7 +6,7 @@ Small project for MIS major.
 
 ## Installation
 
-# Install necessary software
+### Install necessary software
 ```
 apt-get update
 apt-get install python-pip3
@@ -20,7 +20,7 @@ apt-get update
 apt-get install python-certbot-nginx 
 ```
 
-# Edit Nginx
+### Edit Nginx
 
 nano /etc/nginx/sites-available/default
 
@@ -63,21 +63,21 @@ nano /etc/nginx/sites-available/default
 
 service nginx restart
 
-# Install Cert for HTTPs
+### Install Cert for HTTPs
 
 ```
 certbot --nginx -d urdomain.com
 ```
 
 
-# Clone git
+### Clone git
 
 ```
 git clone https://github.com/manutzsong/chatbot
 ```
 
 
-# Import MySQL
+### Import MySQL
 
 ```
 mysql -u root -p
@@ -86,12 +86,12 @@ use saveme
 source saveme.sql **database file location **
 ```
 
-# Link phpmyadmin
+### Link phpmyadmin
 ln -s /usr/share/phpmyadmin /var/www/html ---- Link phpmyadmin to www
 
 
 
-# Edit LINE API Key and Dialogflow API Key
+### Edit LINE API Key and Dialogflow API Key
 
 nano app.py
 
@@ -104,7 +104,7 @@ nano app.py
 	CLIENT_ACCESS_TOKEN = 'ur dialogflow secret key'
 ```
 
-# Move file
+### Move file
 
 	* Create new folder
 		- /home/**new folder**
@@ -112,7 +112,7 @@ nano app.py
 	* Move in file
 		- move both app.py and requirements.txt
 
-# Install requirements.txt		
+### Install requirements.txt		
 	
 ```	
 pip3 install -r requirements.txt
