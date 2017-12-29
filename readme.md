@@ -6,6 +6,8 @@ Small project for MIS major.
 
 ## Installation
 
+# Install necessary software
+```
 apt-get update
 apt-get install python-pip3
 apt-get install nginx
@@ -16,10 +18,14 @@ apt-get install phpmyadmin
 add-apt-repository ppa:certbot/certbot
 apt-get update
 apt-get install python-certbot-nginx 
+```
+
+# Edit Nginx
 
 nano /etc/nginx/sites-available/default
--- edit as follow 
 
+-- edit as follow 
+```
 		server_name dreamcatcherbkk.me;
 	location / {
         # First attempt to serve request as file, then
@@ -53,43 +59,64 @@ nano /etc/nginx/sites-available/default
 	location ~ /\.ht {
 		deny all;
 	}
-
+```
 
 service nginx restart
 
+# Install Cert for HTTPs
+
+```
 certbot --nginx -d urdomain.com
+```
 
 
+# Clone git
 
-
-
+```
 git clone https://github.com/manutzsong/chatbot
+```
 
+
+# Import MySQL
+
+```
 mysql -u root -p
 create database saveme ** or whatever name you like **
 use saveme
 source saveme.sql **database file location **
+```
 
-
-
+# Link phpmyadmin
 ln -s /usr/share/phpmyadmin /var/www/html ---- Link phpmyadmin to www
 
 
 
+# Edit LINE API Key and Dialogflow API Key
 
 nano app.py
+
 -- edit as follow
+
+```
 	channel_secret = 'ur room'
 	channel_access_token = 'ur token'
 	
 	CLIENT_ACCESS_TOKEN = 'ur dialogflow secret key'
+```
 
+# Move file
 
+	* Create new folder
+		- /home/**new folder**
+	
+	* Move in file
+		- move both app.py and requirements.txt
 
-copy my app.py, requirements.txt to /home/ **your username or create new folder **
-cd /home/**your folder **
-
+# Install requirements.txt		
+	
+```	
 pip3 install -r requirements.txt
+```
 
 gunicorn -b 127.0.0.1 app:app
 
