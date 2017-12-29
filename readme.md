@@ -27,7 +27,8 @@ nano /etc/nginx/sites-available/default
 
 -- edit as follow 
 ```
-		server_name dreamcatcherbkk.me;
+	server_name dreamcatcherbkk.me;
+	
 	location / {
         # First attempt to serve request as file, then
         # as directory, then fall back to displaying a 404.
@@ -40,7 +41,7 @@ nano /etc/nginx/sites-available/default
         proxy_redirect off;
         proxy_pass http://127.0.0.1:8000/;
         
-    	}
+    }
 	
 
 	# pass PHP scripts to FastCGI server
@@ -126,7 +127,7 @@ nano app.py
 
 
 
-## Config Supervisor
+### Config Supervisor
 
 	* move chatbot.conf to /etc/supervisor/conf.d
 	
@@ -146,7 +147,7 @@ nano app.py
 
 
 
-## Edit LINE Webhook
+### Edit LINE Webhook
 	
 	* Edit it to your url
 
