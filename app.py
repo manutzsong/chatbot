@@ -34,7 +34,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage,ImageSendMessage,
     SourceUser, SourceGroup, SourceRoom,
     TemplateSendMessage, ConfirmTemplate, MessageTemplateAction,
     ButtonsTemplate, URITemplateAction, PostbackTemplateAction,
@@ -49,8 +49,8 @@ from linebot.models import (
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
-channel_secret = 'XXXXXXXXXXXXX'
-channel_access_token = 'XXXXXXXXXXX'
+channel_secret = '63efbc2b1de481db60cebcda66f8a6f2'
+channel_access_token = 'dZnflRA5ac/U2hZ/Ado81F+t0H8yobXp2IbezUD9ONlaALDmhQED++LxMt9LU2/HX8b4SjSvbgemXAY+cF9uziWIhYLYzyU9uKCBAXMlXY4AISmxnlOzrx0DLnR9a6r/duACcHSjRxCNsZqGNCqL3gdB04t89/1O/w1cDnyilFU='
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
     sys.exit(1)
@@ -62,7 +62,7 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
 
-CLIENT_ACCESS_TOKEN = 'XXXXXXXXXXXXXXXX'
+CLIENT_ACCESS_TOKEN = '37f9249f8aea441083ad7647807be5ee'
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
@@ -73,7 +73,7 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 found_it = 0
 #MYSQL
 #MYSQL
-conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='xb', db='saveme')
+conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='128029486', db='saveme',charset='utf8mb4')
 cur = conn.cursor()
 
 
@@ -112,6 +112,26 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
+
+    try:
+        get_name = line_bot_api.get_profile(event.source.user_id)
+        username = get_name.display_name
+    except:
+        username = event.source.user_id
+    
+
+    #Update lastuse
+    #INSERT INTO `most` (`id`, `uid`, `last_see`, `date_create`) VALUES (NULL, '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    uid = event.source.user_id
+    sql_most = "INSERT INTO `most` (`id`, `uid`, `prof_name`, `time_usage`, `last_see`,`date_create`) VALUES (NULL, %s, %s, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `last_see` = CURRENT_TIMESTAMP, `time_usage` = (@cur_value := time_usage) + 1"
+    cur.execute(sql_most, (uid,username))
+    conn.commit()
+
+
+    
+
+
+    #End lastuse update
     
     if text == 'profile':
         if isinstance(event.source, SourceUser):
@@ -262,6 +282,7 @@ def handle_text_message(event):
 
         
     else:
+        
         if isinstance(event.source, SourceGroup):
             
             sql4 = "SELECT * FROM `mute` WHERE `group_id`=%s"
@@ -287,7 +308,23 @@ def handle_text_message(event):
                 
                 #print(fulfillment)
                 #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
+                try:
+                    intent = response['result']['metadata']['intentName']
+                except Exception as e:
+                    intent = response['result']['action']
 
+                try:
+                    intent_id = response['result']['metadata']['intentId']
+                except Exception as e:
+                    intent_id = "smalltalk.greetings.hello"
+                
+                sql_intent = "INSERT INTO `intent` (`id`, `intent`, `intent_id`, `time`,`last_see`) VALUES (NULL, %s, %s,0, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = CURRENT_TIMESTAMP;"
+                cur.execute(sql_intent, (intent,intent_id))
+                conn.commit()
+
+
+                #sql7 = "UPDATE `intent` SET `time`=(@cur_value := time) + 1 WHERE `intent` = %s"
+                #cur.execute(sql7, (intent,))
                 
                 
                 try:
@@ -309,15 +346,30 @@ def handle_text_message(event):
                                 preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
                             )
                 except Exception as e:
+                    
+
+                    
                     maybe = response['result']['fulfillment']['messages'][0]['speech']
                     line_bot_api.reply_message(
                         event.reply_token, TextSendMessage(text=maybe))
             else:
+                try:
+                    intent = response['result']['metadata']['intentName']
+                except Exception as e:
+                    intent = response['result']['action']
+
+                try:
+                    intent_id = response['result']['metadata']['intentId']
+                except Exception as e:
+                    intent_id = "smalltalk.greetings.hello"
+                
+                sql_intent = "INSERT INTO `intent` (`id`, `intent`, `intent_id`, `time`,`last_see`) VALUES (NULL, %s, %s,0, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = CURRENT_TIMESTAMP;"
+                cur.execute(sql_intent, (intent,intent_id))
+                conn.commit()
                 
                 
-                
-                line_bot_api.reply_message(
-                    event.reply_token, TextSendMessage(text='Unmute me first with command !unmute '))
+                #line_bot_api.reply_message(
+                #    event.reply_token, TextSendMessage(text='Unmute me first with command !unmute '))
 
 
             
@@ -357,6 +409,19 @@ def handle_text_message(event):
                             preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
                         )
             except Exception as e:
+                try:
+                    intent = response['result']['metadata']['intentName']
+                except Exception as e:
+                    intent = response['result']['action']
+
+                try:
+                    intent_id = response['result']['metadata']['intentId']
+                except Exception as e:
+                    intent_id = "smalltalk.greetings.hello"
+                
+                sql_intent = "INSERT INTO `intent` (`id`, `intent`, `intent_id`, `time`,`last_see`) VALUES (NULL, %s, %s,0, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = CURRENT_TIMESTAMP;"
+                cur.execute(sql_intent, (intent,intent_id))
+                conn.commit()
                 maybe = response['result']['fulfillment']['messages'][0]['speech']
                 line_bot_api.reply_message(
                     event.reply_token, TextSendMessage(text=maybe))
