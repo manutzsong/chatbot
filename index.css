@@ -1,0 +1,699 @@
+::-moz-selection { /* Code for Firefox */
+    color: white;
+    background: #EA4C89;
+}
+
+::selection {
+    color: white;
+    background: #EA4C89;
+}
+
+
+.holdtext {
+    border: 1px solid white;
+    display: inline-block;
+    padding-left: 20px;
+    color: white;
+	padding-right: 20px;
+	
+}
+.text-style-port {
+    font-family: Montserrat;
+    font-size: 64px;
+    font-weight: 700;
+    text-align: left;
+}
+.indent_bio {
+	padding-top:80px;
+	padding-right:30px;
+
+	float:right;
+
+}
+.indent_head {
+	padding-top:60px;
+	padding-left:60px;
+
+
+}
+.holdtext_purin {
+    border: 1px solid white;
+    background: rgba(255,255,255,1);
+
+}
+.link_bio {
+text-align: center;
+    padding: 10px 10px;
+    border: 1px solid white;
+    color: white;
+    display: table-cell;
+    vertical-align: middle;
+    -webkit-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.link_bio:hover {
+	
+	background: rgba(255,255,255,0.9);
+    color: black;
+	    -webkit-transition: all 0.3s ease;
+	    -o-transition: all 0.3s ease;
+	    transition: all 0.3s ease;
+	
+}
+a.bio_button:hover {
+    text-decoration: none;
+    background-color: #005990;
+    color: black;
+}
+/*THIS SHIT IS BG RELATED*/
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+#test {
+	background-image:url('./pics/25.jpg');
+	height:100vh;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#picofme {
+	background-image:url('./pics/me3.jpg');
+
+	
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#bio {
+	background-image:url('./pics/31.jpg');
+	
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.whitethis {
+	overflow:hidden;
+	background:white;
+
+
+}
+#divider_div {
+	background-image:url('./pics/31.jpg');
+	height:20em;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+	margin-bottom:5em;
+}
+#gallery_target {
+z-index:200;
+	
+}
+/*THIS SHIT IS BG RELATED */
+.title{
+    font-size:36px;
+    opacity:0.87;
+    font-weight:bold;
+    line-height:1.5;
+    letter-spacing:-0.4px;
+    color:#1e1e1e;
+    margin:0;
+}
+.subtitle{
+    font-size:20px;
+    line-height:1.6;
+    opacity:0.87;
+    color:#1e1e1e;
+    margin:20px 0px 0px 0px;
+}
+.map-form{
+    margin-top:40px;
+}
+.map-form h2{
+    margin:30px 0px 0px 0px;
+    font-size:24px;
+    line-height:1.5;
+    font-weight:bold;
+    opacity:0.5;
+    letter-spacing:-0.4px;
+    color:#1e1e1e;
+}
+.map-form h3{
+    margin:20px 0px 0px 0px;
+    font-size:16px;
+    font-weight:500;
+    line-height:1.5;
+    color:#1e1e1e;
+    opacity:0.5;
+}
+.map-form p{
+    margin:10px 0px 0px 0px;
+    opacity:0.87;
+    font-size:16px;
+    line-height:1.5;
+    color:#1e1e1e;
+}
+
+
+.map-form .form {
+    padding:20px;
+
+	
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#258dc8+0,258dc8+100;Blue+Flat+%231 */
+	background-image:url('./pics/19.jpg');
+
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+
+    /*box-shadow: 0px 2px 2px 2px rgba(0,0,0,0.25);*/
+    margin-bottom:20px;
+}
+
+.map-form .form__row {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.map-form .form__field {
+  display: block;
+  width: 100%;
+  color: #1e1e1e;
+  height: 50px;
+  position: relative;
+  padding: 19px 0px 7px 7px;
+  border: 1px solid #8f8f8f;
+  text-indent: 0;
+  -webkit-appearance: none;
+  border-radius: 3px;
+  background: #fff;
+  -webkit-transition: all .2s linear;
+  -o-transition: all .2s linear;
+  transition: all .2s linear;
+}
+.map-form .form__field:focus {
+    outline: 0;
+  }
+/*  
+.map-form .form__field:required:valid {
+    border: 2px solid #46af91;
+  }
+
+.map-form .form__field:focus:required:invalid {
+    border: 2px solid #e04f42;
+  }
+*/
+.map-form .form__field--select {
+  padding: 8px;
+  color: #acacae;
+  width:auto;
+  cursor:pointer;
+  height:40px;
+  min-width:126px;
+}
+
+.map-form option {
+  color: #333;
+}
+
+.map-form .ph-small {
+    -webkit-transition: all .2s;
+    -o-transition: all .2s;
+    transition: all .2s;
+    color: #8f8f8f;
+    font-size: 10px;
+    line-height: 1.6;
+    margin-top: 2px;
+    margin-left: 7px;
+    position: absolute;
+    z-index: 10;
+    white-space: nowrap;
+    color:#00b6ca;
+}
+
+.map-form .ph-big {
+  font-size: 16px !important;
+  margin: 11px 0px 15px 7px !important;
+  color:#8f8f8f !important;
+}
+
+.map-form .form__submit {
+    padding: 8px 24px;
+    text-align: center;
+    line-height: 1.5;
+    background-color: transparent;
+	border:1px solid white !important;
+    color: white;
+    cursor: pointer;
+    border: 0;
+    outline: 0;
+    -webkit-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    font-size: 16px;
+    font-weight: bold;
+}
+.form__submit:hover {
+
+    background-color: rgba(255, 255, 255, 0.4);
+	border:1px solid white;
+    color: white;
+}
+.map-form .form__title{
+    font-size:14px;
+    font-weight:bold;
+    line-height:1.43;
+    color:white;
+
+    margin-bottom:10px;
+}
+.map-form .form__message{
+    width: 100%;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #1e1e1e;
+    border: solid 1px #8f8f8f;
+    border-radius: 3px;
+    padding: 12px 8px;
+    min-height: 200px;
+    resize: none;
+}
+.map-form .form__message:focus{
+    outline:none;
+}
+
+.skillbar {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.skillbar-bar:before {
+    background: #eee;
+    content: "";
+    height: 3px;
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+}
+
+.skillbar-bar {
+    height: 3px;
+    width: 0px;
+
+    -webkit-transition-property: width, background-color;
+
+    -o-transition-property: width, background-color;
+
+    transition-property: width, background-color;
+}
+.skillbar-green {
+    background: #88cd2a;
+}
+.skillbar-blue {
+    background: #336699;
+}
+.skillbar-orange{
+    background: #FB8B29;
+}
+.skillbar-purple {
+    background: #F36247;
+}
+.skillbar-cyan {
+    background: #59c7ff;
+}
+.skillbar-red {
+    background: #DC223E;
+}
+.skillbar-green2 {
+    background: #1FB393;
+}
+
+.skillbar-title {
+    color: #323232;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.skill-bar-percent {
+    float: right;
+    display: inline-block;
+    color: #323232;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+h1.1em_this {
+	font-size:1em !important;
+	
+}
+
+.overide_skillbar {
+
+	
+}
+.overide_timeline {
+	width:90%;
+
+}
+.float_right {
+	right:0;
+}
+.float_left {
+	float:left;
+	
+}
+
+					
+.dl-horizontal dt {
+    float: left;
+    width: 160px;
+    overflow: hidden;
+    clear: left;
+}
+.text-upper {
+    text-transform: uppercase;
+}
+.font_size_head {
+	margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+	font-size:1.35rem;
+	
+}
+.fa {
+  padding: 15px 70px;
+
+
+  text-align: center;
+  text-decoration: none;
+
+}
+
+.fa:hover {
+    opacity: 0.7;
+}
+
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.fa-google {
+  background: #dd4b39;
+  color: white;
+}
+
+.fa-linkedin {
+  background: #007bb5;
+  color: white;
+}
+
+.fa-youtube {
+  background: #bb0000;
+  color: white;
+}
+
+.fa-instagram {
+  background: #125688;
+  color: white;
+}
+
+.fa-pinterest {
+  background: #cb2027;
+  color: white;
+}
+
+.fa-snapchat-ghost {
+  background: #fffc00;
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.fa-skype {
+  background: #00aff0;
+  color: white;
+}
+
+.fa-android {
+  background: #a4c639;
+  color: white;
+}
+
+.fa-dribbble {
+  background: #ea4c89;
+  color: white;
+}
+
+.fa-vimeo {
+  background: #45bbff;
+  color: white;
+}
+
+.fa-tumblr {
+  background: #2c4762;
+  color: white;
+}
+
+.fa-vine {
+  background: #00b489;
+  color: white;
+}
+
+.fa-foursquare {
+  background: #45bbff;
+  color: white;
+}
+
+.fa-stumbleupon {
+  background: #eb4924;
+  color: white;
+}
+
+.fa-flickr {
+  background: #f40083;
+  color: white;
+}
+
+.fa-yahoo {
+  background: #430297;
+  color: white;
+}
+
+.fa-soundcloud {
+  background: #ff5500;
+  color: white;
+}
+
+.fa-reddit {
+  background: #ff5700;
+  color: white;
+}
+
+.fa-rss {
+  background: #ff6600;
+  color: white;
+}
+/* Preloader */
+
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  /* change if the mask should have another color then white */
+  z-index: 99;
+  /* makes sure it stays on top */
+}
+
+#status {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  left: 50%;
+  /* centers the loading animation horizontally one the screen */
+  top: 50%;
+  /* centers the loading animation vertically one the screen */
+  background-image: url('Ellipsis.gif');
+  /* path to your loading animation */
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: -100px 0 0 -100px;
+  /* is width and height divided by two */
+}
+#particles-js canvas{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+		background-image:url('./pics/25.jpg');
+
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#particles-js2 canvas{
+    position: absolute;
+    width: 100%;
+    min-height: 400%;
+    z-index: -1;
+
+
+}
+.side_portrait {
+			background-image:url('./pics/me3.jpg');
+
+    background-attachment: fixed;
+    background-size:     cover;                      /* <------ */
+    background-repeat:   no-repeat;
+    background-position: center center; 
+	
+}
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.container-middle-me{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+	height:100vh;
+}
+.container-middle-me-2{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+	text-transform:uppercase;
+height:100%;
+ -webkit-box-align: center;
+     -ms-flex-align: center;
+         align-items: center;
+ -webkit-box-pack: center;
+     -ms-flex-pack: center;
+         justify-content: center;
+}
+.container-middle-me-no{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+	background-image:url('./pics/25.jpg');
+	height:20em;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+}
+.container-middle-me-2 h1 {
+	letter-spacing: 10px;
+}
+    /* default styles here for older browsers. 
+       I tend to go for a 600px - 960px width max but using percentages
+    */
+    @media only screen and (min-width:960px){
+        .container-middle-me h1 {
+			font-size:8em;
+		}
+		.col h2 {
+			font-size:2em;
+		}
+
+    }
+    @media only screen and (min-width:1440px){
+        .container-middle-me h1 {
+			font-size:10em;
+		}
+		.container-middle-me h2 {
+			font-size:2.5em;
+		}
+		.container-middle-me-2 h1 {
+			letter-spacing:10px;
+			font-size:2em;
+			
+		}
+    }
+    @media only screen and (min-width:2000px){
+        .container-middle-me h1 {
+			font-size:15em;
+		}
+		.container-middle-me h2 {
+			font-size:5em;
+		}
+		
+    }
+    @media only screen and (max-device-width:480px){
+        .container-middle-me h1 {
+			font-size:5em;
+		}
+		.container-middle-me h2 {
+			font-size:1.5em;
+		}
+		.container-middle-me-2 h1 {
+			letter-spacing:5px;
+			font-size:1em;
+			
+		}
+    }
+    @media only screen and (device-width:768px){
+        .container-middle-me h1 {
+			font-size:7em;
+		}
+		.container-middle-me h2 {
+			font-size:1em;
+		}
+    }
+    /* different techniques for iPad screening */
+    @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+        .container-middle-me h1 {
+			font-size:7em;
+		}
+		.container-middle-me h2 {
+			font-size:1.5em;
+		}
+    }
+
+    @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
+        .container-middle-me h1 {
+			font-size:7em;
+		}
+		.container-middle-me h2 {
+			font-size:2em;
+		}
+    }

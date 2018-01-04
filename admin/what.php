@@ -4,7 +4,7 @@
 <?php
 
 $access_token = '34af60e6f8414c698257f96b2a1dd5fe';
-$intent_id = 'c11b73f2-a637-4e7b-8586-a0999d18bb1f';
+$intent_id = $_POST['intent_what'];
 $url = 'https://api.dialogflow.com/v1/intents/'.$intent_id.'?v=20150910';
 
 $headers = array('Authorization: Bearer ' . $access_token);
