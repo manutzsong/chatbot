@@ -8,13 +8,14 @@
 	$con = mysqli_connect($serverName,$userName,$userPassword,$dbName);
 	
 	$mysqli = $con;
-	$mysqli->set_charset("utf8");
+	$con->set_charset("utf8");
+	mysqli_set_charset($con,"utf8mb4");
 	
 	if (mysqli_connect_errno())
 	{
 		echo "Database Connect Failed : " . mysqli_connect_error();
 		exit();
 	}
-	
+
 	
 ?>

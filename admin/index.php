@@ -4,7 +4,7 @@
 @include "db.php";
 session_start();
 if ($_SESSION["logas"]) {
-	header("Location: view.php");
+	header("Location: landing.php");
 }
 
 
@@ -59,43 +59,42 @@ function background() {
 
   
   
-<div class="parallax"></div>
+<div class="parallax">
   
- <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-bottom">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <a class="navbar-brand" href="#">MIS Chatbot</a>
 
-  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-	  <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-		  <li class="nav-item active">
-			
-		  </li>
-		</ul>
-    <ul class="nav navbar-nav navbar-right">
-      <li class="nav-item">
-        <form class="form-inline" id="loginform">
-		  
-			  <div class="input-group">
-		  <div class="input-group-prepend">
-			<span class="input-group-text" id="">Login</span>
+  
+ <div class="container h-100">
+  <div class="row h-100 justify-content-center align-items-center">
+
+		<form class="boxme2" id="loginform">
+			<div class="row">
+				
+				<div class="col-9">
+				  <div class="form-group row">
+					<label for="staticEmail" class="col-sm-4 col-form-label"><span style="color:white">Username</span></label>
+					<div class="col-sm-8">
+					  <input name="username" placeholder="Username" type="text" class="form-control">
+					</div>
+				  </div>
+				  <div class="form-group row">
+					<label for="inputPassword" class="col-sm-4 col-form-label"><span style="color:white">Password</span></label>
+					<div class="col-sm-8">
+					
+					   <input name="password" placeholder="Password" type="password" class="form-control">
+					
+					</div>
+				  </div>
+				  
+				  </div>
+				
+		  <div class="col-2">
+			<input type="submit" value="Login" class="btn btn-outline-secondary">
 		  </div>
-		  <input name="username" placeholder="Username" type="text" class="form-control">
-		  <input name="password" placeholder="Password" type="password" class="form-control">
-		  <div class="input-group-append">
-			<input type="submit" value="Submit" class="btn btn-outline-secondary">
 		  </div>
-		</div>
-		  
 		</form>
-      </li>
-	  
-    </ul>
-</nav> 
-  
-  
-  
+  </div>
+</div> 
+</div>  
   
   
   

@@ -321,7 +321,10 @@ def handle_text_message(event):
                 sql_intent = "INSERT INTO `intent` (`id`, `intent`, `intent_id`, `time`,`last_see`) VALUES (NULL, %s, %s,0, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = CURRENT_TIMESTAMP;"
                 cur.execute(sql_intent, (intent,intent_id))
                 conn.commit()
-
+                
+                sql_intent_today = "INSERT INTO `today_intent` (`id`, `intent`, `intent_id`, `time`, `intent_day`, `last_see`) VALUES (NULL, %s, %s, 1, DATE(NOW()), CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = DATE(NOW());"
+                cur.execute(sql_intent_today, (intent,intent_id))
+                conn.commit()
 
                 #sql7 = "UPDATE `intent` SET `time`=(@cur_value := time) + 1 WHERE `intent` = %s"
                 #cur.execute(sql7, (intent,))
@@ -365,6 +368,10 @@ def handle_text_message(event):
                 
                 sql_intent = "INSERT INTO `intent` (`id`, `intent`, `intent_id`, `time`,`last_see`) VALUES (NULL, %s, %s,0, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = CURRENT_TIMESTAMP;"
                 cur.execute(sql_intent, (intent,intent_id))
+                conn.commit()
+
+                sql_intent_today = "INSERT INTO `today_intent` (`id`, `intent`, `intent_id`, `time`, `intent_day`, `last_see`) VALUES (NULL, %s, %s, 1, DATE(NOW()), CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = DATE(NOW());"
+                cur.execute(sql_intent_today, (intent,intent_id))
                 conn.commit()
                 
                 
@@ -422,6 +429,12 @@ def handle_text_message(event):
                 sql_intent = "INSERT INTO `intent` (`id`, `intent`, `intent_id`, `time`,`last_see`) VALUES (NULL, %s, %s,0, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = CURRENT_TIMESTAMP;"
                 cur.execute(sql_intent, (intent,intent_id))
                 conn.commit()
+
+                sql_intent_today = "INSERT INTO `today_intent` (`id`, `intent`, `intent_id`, `time`, `intent_day`, `last_see`) VALUES (NULL, %s, %s, 1, DATE(NOW()), CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `time` = `time` + 1, `last_see` = DATE(NOW());"
+                cur.execute(sql_intent_today, (intent,intent_id))
+                conn.commit()
+
+                
                 maybe = response['result']['fulfillment']['messages'][0]['speech']
                 line_bot_api.reply_message(
                     event.reply_token, TextSendMessage(text=maybe))

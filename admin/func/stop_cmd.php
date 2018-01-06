@@ -1,5 +1,5 @@
 <?php
-set_include_path('./SSHa');
+set_include_path('../SSHa');
 include('Net/SSH2.php');
 
 
@@ -10,7 +10,7 @@ if (!$ssh->login('root', '128029486')) {
 
 $ssh->exec('> /home/u5712694/chatbot/gunicorn_stdout.log');
 
-$ssh->exec('supervisorctl restart chatbot');
+$ssh->exec('supervisorctl stop chatbot');
 
 $result_ssh = $ssh->exec('supervisorctl status chatbot');
 $exploded=preg_split('/\s+/',$result_ssh); //Limit is unspecified, so it will return all the substrings;	
