@@ -77,26 +77,27 @@ function get_server_cpu_usage(){
 
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="MIS Chatbot Control">
-	<meta name="author" content="Purin Koettip">   
-    
 
-    <!-- Bootstrap CSS -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>SB Admin - Start Bootstrap Template</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-	<!-- My css -->
-	<link rel="stylesheet" href="mycss.css">
-	
-    <title>Hello, world!</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script>
+    
+    
+    <!-- Custom scripts for this page-->
+
+  <!-- Custom styles for this template-->
+  <link href="./thingy/sb-admin.css" rel="stylesheet">
+  <link href="mycss.css" rel="stylesheet">
+  <script>
 	function google_chart1() {
 
 		  google.charts.load('current', {'packages':['line']});
@@ -185,7 +186,7 @@ $(document).ready(function(){
 
 function logoutme() {$.ajax({
         type: 'POST',
-        url: 'logout.php',
+        url: './func/logout.php',
         data: {logout: '<?php echo $loged?>'},
         success: function (data) {
             if (data == 'outalready') {
@@ -309,44 +310,6 @@ function start_server() {
         });
 		
 }
-function stop_server() {
-	
-	$.ajax({
-            type: 'POST',
-            url: './func/stop_cmd.php',
-            
-            //dataType: 'json',
-			beforeSend: function() {
-				$('#s1').css("background-color", "white");
-				$('#s1').html('<img class="img_spin" src="Ellipsis.gif">');
-				
-				$('#s2').css("background-color", "white");
-				$('#s2').html('<img class="img_spin" src="Ellipsis.gif">');
-				
-				$('#s3').css("background-color", "white");
-				$('#s3').html('<img class="img_spin" src="Ellipsis.gif">');
-                
-            },
-            
-            success: function(result) {
-                //$('#comeon1').text(result[0]);
-				if (result == 'work') {
-					show_status();
-					reload_log();
-					
-				}
-				else {
-					show_status();
-					reload_log();
-
-						
-				}
-				
-
-            },
-        });
-		
-}
 function nl2br (str, is_xhtml) {   
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
@@ -417,22 +380,56 @@ function update_usage() {
 		
 }
 </script>
-  </head>
-  
-  <body data-spy="scroll" data-target=".navbar" data-offset="50" onload="show_status();google_chart1();reload_log();uptime();update_usage();refresh();refresh1sec();google_chart2();">
-	
+</head>
+
+<body class="fixed-nav sticky-footer bg-dark" id="page-top" onload="show_status();google_chart1();reload_log();uptime();update_usage();refresh();refresh1sec();google_chart2();">
 <div style="display:none"><img src="Ellipsis.gif"></div>
-
-   
-<nav class="navbar nav-link navbar-light fixed-top navbar-expand-lg bg-light">
-  <a class="navbar-brand" href="#">MIS Chatbot</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-	<li class="nav-item dropdown">
+  <!-- Navigation-->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+		
+		
+		
+		
+          <a class="nav-link" href="index.html">
+            <i class="fa fa-fw fa-dashboard"></i>
+            <span class="nav-link-text">Dashboard</span>
+          </a>
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+        </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
+          <a class="nav-link" href="charts.html">
+            <i class="fa fa-fw fa-area-chart"></i>
+            <span class="nav-link-text">Charts</span>
+          </a>
+        </li>
+		
+		
+		
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+          <a class="nav-link" href="tables.html">
+            <i class="fa fa-fw fa-table"></i>
+            <span class="nav-link-text">Tables</span>
+          </a>
+        </li>
+		
+		
+		
+		
+		
+		<li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           User Info
         </a>
@@ -441,63 +438,94 @@ function update_usage() {
           <a class="dropdown-item" href="#recentregist">Recently Register</a>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#groupmute">Group mute</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#topintent">Top intents</a>
-      </li>
+		
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="User Info">
+          <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
+            <i class="fa fa-fw fa-wrench"></i>
+            <span class="nav-link-text">User Info</span>
+          </a>
+          <ul class="sidenav-second-level collapse" id="collapseComponents">
+            <li>
+              <a href="#topuser">Top Users</a>
+            </li>
+            <li>
+              <a href="#recentregist">Recently Register</a>
+            </li>
+          </ul>
+        </li>
+		
+		
+		
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
+          <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseExamplePages" data-parent="#exampleAccordion">
+            <i class="fa fa-fw fa-file"></i>
+            <span class="nav-link-text">Example Pages</span>
+          </a>
+          <ul class="sidenav-second-level collapse" id="collapseExamplePages">
+            <li>
+              <a href="login.html">Login Page</a>
+            </li>
+            <li>
+              <a href="register.html">Registration Page</a>
+            </li>
+            <li>
+              <a href="forgot-password.html">Forgot Password Page</a>
+            </li>
+            <li>
+              <a href="blank.html">Blank Page</a>
+            </li>
+          </ul>
+        </li>
+
+		
+		
+		
+		
+        
+		
+		
+		
+      </ul>
+      <ul class="navbar-nav sidenav-toggler">
+        <li class="nav-item">
+          <a class="nav-link text-center" id="sidenavToggler">
+            <i class="fa fa-fw fa-angle-left"></i>
+          </a>
+        </li>
+      </ul>
+	  <ul class="navbar-nav ml-auto">
+
+
+		<li class="nav-item">  
+					 <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+            <i class="fa fa-fw fa-sign-out"></i>
+			<span id="comeon1"></span> Status : <span id="comeon2">...</span> PID : <span id="comeon3">...</span> Uptime : <span id="comeon4">...</span>
+			
+			</a>
+						
+					
+			</li>
+	</ul>		
+      <ul class="navbar-nav ml-auto">
+
+
+		
+		
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+            <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="content-wrapper">
+    <div class="container-fluid"><!-- Start Content-->
       
-	  <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				Manage Server
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#server">Chatbot Info</a>
-		  <a class="dropdown-item" href="#server">Start/Stop Chatbot</a>
-		  
-          <a class="dropdown-item" href="#server">Server Info</a>
-        </div>
-      </li>
-	  
-	  <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				Analyze
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#traffic">Traffic</a>
-		  <a class="dropdown-item" href="#piechart">Intent Reply</a>
-		  
-          
-        </div>
-      </li>
+      
 	  
 	  
 	  
-
-    </ul>
-	
-
-
-<ul class="nav navbar-nav mx-auto" href="#">	
-	<li class="nav-item">  
-			
-				<span id="comeon1"></span> Status : <span id="comeon2">...</span> PID : <span id="comeon3">...</span> Uptime : <span id="comeon4">...</span>
-			
-	</li>
-</ul>
-
-    <ul class="nav navbar-nav navbar-right">
-				<li class="nav-item" >
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#logout_modal">
-					  Logout
-					</button>
-				</li>
-	</ul>
-  </div>
-</nav>
-
-
+	 
 	<div id="topuser"></div>
 	<div class="container" style="padding-top:5em;">
 			<div class="boxme">
@@ -719,10 +747,7 @@ function update_usage() {
 				
 			</div>
 			<div class="col-md-2"><h6>Server Control</h6>
-
-				<button class="btn btn-success btn-block" onClick="start_server();">Start</button>
-				<button class="btn btn-danger btn-block" data-toggle="modal" data-target="#stop_modal">Stop</button>
-				
+				<button class="btn btn-success btn-block" onClick="start_server();">Start</button><button class="btn btn-danger btn-block" onClick="start_server();">Stop</button>
 			</div>
 			</div>
 		</div>
@@ -751,60 +776,87 @@ function update_usage() {
 		</div>
 		
 	</div>
-	<br><br><br><br><br>
-<!-- FREAKING MODAL -->
-
-<!-- Button trigger modal -->
-<!-- Button trigger modal -->
-
-<!-- Modal -->
-<div class="modal fade" id="logout_modal" tabindex="-1" role="dialog" aria-labelledby="logout_modal_aria" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="logout_modal_aria">Logout</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+	<br><br><br><br><br> 
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+    </div><!-- End Contain-->
+    <!-- /.container-fluid-->
+    <!-- /.content-wrapper-->
+    <footer class="sticky-footer">
+      <div class="container">
+        <div class="text-center">
+          <small>Copyright © Your Website 2017</small>
+        </div>
       </div>
-      <div class="modal-body">
-        Are you sure you want to logout ?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Stay</button>
-        <button type="button" class="btn btn-primary" onClick="logoutme()">Logout</button>
+    </footer>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fa fa-angle-up"></i>
+    </a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            <button class="btn btn-primary" type="button" onClick="logoutme();">Logout</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- Custom scripts for all pages-->
 
-
-<div class="modal fade" id="stop_modal" tabindex="-1" role="dialog" aria-labelledby="stop_server" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="stop_server">Stop Server ?</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to <span style="color:red">STOP</span> Chatbot server ?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Keep it running</button>
-        <button type="button" class="btn btn-primary" onClick="stop_server();">Stop Server</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- END MODAL -->	
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
-  </body>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- Toggle between fixed and static navbar-->
+    <script>
+    $('#toggleNavPosition').click(function() {
+      $('body').toggleClass('fixed-nav');
+      $('nav').toggleClass('fixed-top static-top');
+    });
+
+    </script>
+    <!-- Toggle between dark and light navbar-->
+    <script>
+    $('#toggleNavColor').click(function() {
+      $('nav').toggleClass('navbar-dark navbar-light');
+      $('nav').toggleClass('bg-dark bg-light');
+      $('body').toggleClass('bg-dark bg-light');
+    });
+
+    </script>
+  </div>
+</body>
+
 </html>

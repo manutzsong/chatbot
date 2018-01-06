@@ -1,5 +1,5 @@
 <?php
-set_include_path('./SSHa');
+set_include_path('../SSHa');
 include('Net/SSH2.php');
 
 
@@ -8,7 +8,7 @@ if (!$ssh->login('root', '128029486')) {
     exit('Login Failed');
 }
 
-echo nl2br($ssh->exec('cat /home/u5712694/chatbot/gunicorn_stdout.log'));
+echo $ssh->exec('uptime -p');
 
 
 

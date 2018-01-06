@@ -8,7 +8,7 @@ if (!$_SESSION["logas"]) {
 	header("Location: index.php");
 }
 
-
+mysqli_set_charset($con,"utf8mb4");
 $sqlmute = "select * from mute";
 $resultmute = mysqli_query($con, $sqlmute);
 
@@ -37,43 +37,7 @@ $result_reg = mysqli_query($con, $sql_reg);
 
 
 
-//Byte func
 
-
-	
-	
-	$bytes = disk_free_space("."); 
-    $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
-    $base = 1024;
-    $class = min((int)log($bytes , $base) , count($si_prefix) - 1);
-    //echo $bytes . '<br />';
-    //echo sprintf('%1.2f' , $bytes / pow($base,$class)) . ' ' . $si_prefix[$class];
-  
-  
-  
-  
-  
- //Server relate
-
-function get_server_memory_usage(){
-
-    $free = shell_exec('free');
-    $free = (string)trim($free);
-    $free_arr = explode("\n", $free);
-    $mem = explode(" ", $free_arr[1]);
-    $mem = array_filter($mem);
-    $mem = array_merge($mem);
-    $memory_usage = $mem[2]/$mem[1]*100;
-	
-    return $memory_usage;
-} 
-  
-function get_server_cpu_usage(){
-
-    $load = sys_getloadavg();
-    return $load[0];
-
-}  
 
 
 ?>
@@ -96,82 +60,7 @@ function get_server_cpu_usage(){
 	
     <title>Hello, world!</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script>
-	function google_chart1() {
-
-		  google.charts.load('current', {'packages':['line']});
-		  google.charts.setOnLoadCallback(drawChart);
-
-		function drawChart() {
-
-		  var data = new google.visualization.DataTable();
-		  data.addColumn('date', 'Day');
-		  data.addColumn('number', 'Traffic');
-
-
-		  data.addRows([
-		  <?php
-		  while($row_line = mysqli_fetch_assoc($result_line)) { 
-			echo "[new Date(".$row_line['date']."),  ".$row_line['count_traffic']."],";
-		  }
-		  ?>
-		  
-			
-		  ]);
-
-		  var options = {
-			chart: {
-			  //title: 'LINE Usage',
-			  subtitle: 'reply per day'
-			},
-			series: {
-            0: { color: '#0288D1' },
-            
-          },
-			
-			
-			
-			width: 500,
-			height: 300
-		  };
-
-		  var chart = new google.charts.Line(document.getElementById('linechart_material'));
-
-		  chart.draw(data, google.charts.Line.convertOptions(options));
-		}
-	}
 	
-	function google_chart2() {
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-
-        var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-           <?php
-		  while($row_pie = mysqli_fetch_assoc($result_intent_pie)) { 
-		  $name_i = $row_pie['intent'];
-		  $time_i = $row_pie['time'];
-		  //['Work',     11],
-			echo "['$name_i', $time_i],";
-		  }
-		  ?>
-        ]);
-
-        var options = {
-		//pieSliceText: 'label',
-        //title: 'Swiss Language Use (100 degree rotation)',
-        pieStartAngle: 100,
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-        chart.draw(data, options);
-      }	
-	}
-	
-	</script>
 <script>
 $(document).ready(function(){
     $('[data-toggle="popover"]').popover({ trigger: "hover" });   
@@ -205,8 +94,7 @@ function refresh() {
 	 setInterval(function(){ 
 	 
 	         show_status();
-		reload_log();
-		update_usage();
+
 
 	 
 	 }, 10000);
@@ -233,23 +121,18 @@ function show_status() {
                 //$('#comeon1').text(result[0]);
 				if (result[1] == 'RUNNING') {
 					$('#comeon2').text('Online');
-					$('#s1').text('Online');
+
 					$('#comeon2').css("background-color", "#4CAF50");
-					$('#s1').css("background-color", "#4CAF50");
+
 					$('#comeon2').css("color", "white");
-					$('#s1').css("color", "white");
-					
+
 					$('#comeon3').text(result[3]);
 					$('#comeon4').text(result[5]);
-					$('#s2').text(result[3]);
-					$('#s3').text(result[5]);
+
 					
-					$('#comeon3').css("color", "black");
+					$('#comeon3').css("color", "white");
 					$('#comeon4').css("color", "#4CAF50");
-					$('#s2').css("color", "black");
-					$('#s3').css("color", "white");
-					$('#s3').css("background-color", "#4CAF50");
-					
+
 				}
 				else {
 					
@@ -258,10 +141,6 @@ function show_status() {
 					$('#comeon2').css("color", "white");
 					$('#comeon4').css("color", "red");
 					
-					$('#s1').text('Offline');
-					$('#s1').css("background-color", "red");
-					$('#s1').css("color", "white");
-					$('#s1').css("color", "red");
 						
 				}
 				
@@ -271,161 +150,18 @@ function show_status() {
 		
 }
 
-function start_server() {
-	
-	$.ajax({
-            type: 'POST',
-            url: './func/run_cmd.php',
-            
-            //dataType: 'json',
-			beforeSend: function() {
-				$('#s1').css("background-color", "white");
-				$('#s1').html('<img class="img_spin" src="Ellipsis.gif">');
-				
-				$('#s2').css("background-color", "white");
-				$('#s2').html('<img class="img_spin" src="Ellipsis.gif">');
-				
-				$('#s3').css("background-color", "white");
-				$('#s3').html('<img class="img_spin" src="Ellipsis.gif">');
-                
-            },
-            
-            success: function(result) {
-                //$('#comeon1').text(result[0]);
-				if (result == 'work') {
-					show_status();
-					reload_log();
-					
-				}
-				else {
-					show_status();
-					reload_log();
-
-						
-				}
-				
-
-            },
-        });
-		
-}
-function stop_server() {
-	
-	$.ajax({
-            type: 'POST',
-            url: './func/stop_cmd.php',
-            
-            //dataType: 'json',
-			beforeSend: function() {
-				$('#s1').css("background-color", "white");
-				$('#s1').html('<img class="img_spin" src="Ellipsis.gif">');
-				
-				$('#s2').css("background-color", "white");
-				$('#s2').html('<img class="img_spin" src="Ellipsis.gif">');
-				
-				$('#s3').css("background-color", "white");
-				$('#s3').html('<img class="img_spin" src="Ellipsis.gif">');
-                
-            },
-            
-            success: function(result) {
-                //$('#comeon1').text(result[0]);
-				if (result == 'work') {
-					show_status();
-					reload_log();
-					
-				}
-				else {
-					show_status();
-					reload_log();
-
-						
-				}
-				
-
-            },
-        });
-		
-}
-function nl2br (str, is_xhtml) {   
-    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
-    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
-}
-
-function reload_log() {
-	
-	$.ajax({
-            type: 'POST',
-            url: './func/get_detail.php',
-            
-            //dataType: 'json',
-			beforeSend: function() {
-				
-                
-            },
-            
-            success: function(data) {
-                var convert = nl2br(data);
-				$('#log').html(data);
-
-            },
-        });
-		
-}
-
-function uptime() {
-	
-	$.ajax({
-            type: 'POST',
-            url: './func/get_uptime.php',
-            
-            //dataType: 'json',
-			beforeSend: function() {
-				
-                
-            },
-            
-            success: function(data) {
-                
-				$('#r3').text(data);
-
-            },
-        });
-		
-}
-function update_usage() {
-	
-	$.ajax({
-            type: 'POST',
-            url: './func/get_mem.php',
-            
-            dataType: 'json',
-			beforeSend: function() {
-				
-                
-            },
-            
-            success: function(result) {
-				//console.log(result[0]);
-                $('#r1').text(result[0]);
-				$('#r2').text(result[1]);
-				$('#r4').text(result[2]);
-				$('#r5').text(result[3]);
-
-            },
-        });
-		
-}
 </script>
   </head>
   
   <body data-spy="scroll" data-target=".navbar" data-offset="50" onload="show_status();google_chart1();reload_log();uptime();update_usage();refresh();refresh1sec();google_chart2();">
 	
 <div style="display:none"><img src="Ellipsis.gif"></div>
-
+<div class="alert alert-success n fixed-top" id="contact-us" style="margin-top:40;display:none">
+			  <strong>Success!</strong> <span id="remove_what">Delete : </span></a>.
+			</div>
    
-<nav class="navbar nav-link navbar-light fixed-top navbar-expand-lg bg-light">
-  <a class="navbar-brand" href="#">MIS Chatbot</a>
+<nav class="navbar nav-link navbar-dark fixed-top navbar-expand-lg head">
+  <a class="navbar-brand" href="landing.php">MIS Chatbot</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -433,40 +169,40 @@ function update_usage() {
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
 	<li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="user.php" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           User Info
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#topuser">Top Users</a>
-          <a class="dropdown-item" href="#recentregist">Recently Register</a>
+          <a class="dropdown-item" href="user.php#topuser">Top Users</a>
+          <a class="dropdown-item" href="user.php#recentregist">Recently Register</a>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#groupmute">Group mute</a>
+        <a class="nav-link" href="user.php#groupmute">Group mute</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#topintent">Top intents</a>
+        <a class="nav-link" href="intent.php#topintent">Top intents</a>
       </li>
       
 	  <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="server.php" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				Manage Server
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#server">Chatbot Info</a>
-		  <a class="dropdown-item" href="#server">Start/Stop Chatbot</a>
+          <a class="dropdown-item" href="server.php#server">Chatbot Info</a>
+		  <a class="dropdown-item" href="server.php#server">Start/Stop Chatbot</a>
 		  
-          <a class="dropdown-item" href="#server">Server Info</a>
+          <a class="dropdown-item" href="server.php#server">Server Info</a>
         </div>
       </li>
 	  
 	  <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="analyze.php" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				Analyze
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#traffic">Traffic</a>
-		  <a class="dropdown-item" href="#piechart">Intent Reply</a>
+          <a class="dropdown-item" href="analyze.php#traffic">Traffic</a>
+		  <a class="dropdown-item" href="analyze.php#piechart">Intent Reply</a>
 		  
           
         </div>
@@ -534,7 +270,7 @@ function update_usage() {
 		
 		<div id="recentregist" style="padding-top:2em;padding-bottom:2em;"></div>
 		<div class="boxme">
-		<h4>Recently Register User | Available Space : <?php echo sprintf('%1.2f' , $bytes / pow($base,$class)) . ' ' . $si_prefix[$class]; ?></h4>
+		<h4>Recently Register User</h4>
 			<div class="row">
 				<div class="col-md-2"></div>
 				<div class="col-md-3"><h6>ID</h6></div>
@@ -572,9 +308,7 @@ function update_usage() {
 				<div class="col-md-1"></div>
 			</div>
 			<br><br>
-			<div class="alert alert-success n" id="contact-us" style="display:none">
-			  <strong>Success!</strong> <span id="remove_what">Delete : </span></a>.
-			</div>
+			
 			<div class="pre-scrollable2">
 			<?php
 				while($row2 = mysqli_fetch_assoc($resultmute)) { 
@@ -630,128 +364,10 @@ function update_usage() {
 				
 				
 				
-				
-<div id="topintent" style="padding-top:2em;padding-bottom:2em;"></div>
-<div class="boxme">
-			<h4>Top 10 Intents</h4>
-			<div class="row">
-				<div class="col-md-2"></div>
-				<div class="col-md-3"><h6>Intent name</h6></div>
-				<div class="col-md-3"><h6>Time reply</h6></div>
-				<div class="col-md-2"><h6>Last reply</h6></div>
-				<div class="col-md-2"></div>
-			</div>
-
-			<?php
-				while($row_intent = mysqli_fetch_assoc($result_intent)) { 
-					$intent_name = $row_intent['intent'];
-					$intent_time = $row_intent['time'];
-					$intent_id = $row_intent['intent_id'];
-					$intent_lastsee = $row_intent['last_see'];
-					
-					echo "<div class='row'>
-							<div class='col-md-2'></div>
-							<div class='col-md-3'>
-								
-								
-								
-								<a href='#' onmouseover=\"
-
-	var el = $(this);
-    var _data = el.attr('alt');							
-	$.ajax({
-  type: 'POST',
-  data: {intent_what: '$intent_id'},
-  url: './func/what.php',
-  dataType: 'json',
-  success: function(data){
-    el.attr('data-content', data);
-    el.popover('show');
-    
-  }
-});
-\" data-toggle='popover' title='Intent Reply' data-content='Loading...' >$intent_name</a>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-							</div>
-							<div class='col-md-3'>
-								$intent_time
-							</div>
-							<div class='col-md-2'>
-								$intent_lastsee
-							</div><div class='col-md-2'></div>
-						  </div>"; 
-					
-				} ?></div>				
-		<br><br><br><br><br>
-		<div id="server"></div>
-		<div class="boxme">
-		<div class="row">
-			<div class="col-md-2">
-				<h4>Server Information</h4>
-			</div>
-			<div class="col-md-8">
-				<h6>Chatbot Status : <span id="s1">Undefined</span></h6>
-				<h6>Chatbot  PID : <span id="s2">Undefined</span></h6>
-				<h6>Chatbot  Uptime : <span id="s3">Undefined</span></h6>	
-				<br><br>
-				<h6>Server Memory Usage : <span id="r1"></span></h6>	
-				<h6>Server CPU Usage : <span id="r2"></span></h6>	
-				<h6>Server Uptime : <span id="r3">Undefined</span></h6>	
-				
-				<h6>Server Space Available : <span id="r4"></span></h6>	
-				<h6>Server Space Total : <span id="r5"></span></h6>	
-				<br><br>
-				<h6>Server Log : </h6>
-				<br>
-				<br>
-				<div id="log" class="pre-scrollable2">
-					
-				</div>
-				
-				
-			</div>
-			<div class="col-md-2"><h6>Server Control</h6>
-
-				<button class="btn btn-success btn-block" onClick="start_server();">Start</button>
-				<button class="btn btn-danger btn-block" data-toggle="modal" data-target="#stop_modal">Stop</button>
-				
-			</div>
-			</div>
-		</div>
 		
-		<br><br><br><br><br>
-		<div id="traffic" ></div>
-		<div class="boxme">
-		<div class="row">
-			<div class="col-md-2">
-				<h4>Analyze</h4>
-			</div>
-			<div class="col-md-8">
-			
-					<h6>LINE Usage</h6>
-					<div id="linechart_material" style="width:100%"></div>
-					
-					<br><hr><br>
-					
-					<h6>Intent Reply </h6>
-					<div id="piechart" ></div>
-			</div>
-			<div class="col-md-2">
-				
-			</div>
-		</div>
-		</div>
 		
 	</div>
-	<br><br><br><br><br>
+	<br><br>
 <!-- FREAKING MODAL -->
 
 <!-- Button trigger modal -->
