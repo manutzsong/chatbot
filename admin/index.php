@@ -1,7 +1,7 @@
 <?php
 
 
-@include "db.php";
+
 session_start();
 if ($_SESSION["logas"]) {
 	header("Location: landing.php");

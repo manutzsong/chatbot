@@ -2,7 +2,7 @@
 
 
 
-@include "./func/db.php";
+@include "./func/conf.php";
 session_start();
 if (!$_SESSION["logas"]) {
 	header("Location: index.php");

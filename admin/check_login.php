@@ -1,7 +1,7 @@
 <?php
 	
 
-	@include "./func/db.php";
+	@include "./func/conf.php";
 	
 	$received_username = mysqli_real_escape_string($con,$_POST['username']);
 	$received_password = mysqli_real_escape_string($con,$_POST['password']);

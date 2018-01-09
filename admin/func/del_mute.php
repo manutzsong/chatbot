@@ -1,5 +1,5 @@
 <?php
-@include "db.php";
+@include "conf.php";
 
 $yes = $_POST['del_id'];
 
