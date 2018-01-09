@@ -11,7 +11,7 @@ if (!$_SESSION["logas"]) {
 mysqli_set_charset($con,"utf8mb4");
 
 //Top today
-$sql_intent = "SELECT * FROM `today_intent` ORDER BY `time` DESC LIMIT 10";
+$sql_intent = "SELECT * FROM `today_intent` WHERE `intent_day` = DATE(NOW()) ORDER BY `today_intent`.`time` DESC";
 $result_intent = mysqli_query($con, $sql_intent);
 
 
@@ -296,7 +296,7 @@ function stop_server() {
 <div class="row">
 	<div class="col">
 		<div class="card text-center">
-			<h5 class="card-header">Top Usage</h5>
+			<h5 class="card-header">Today Traffic</h5>
 			<div class="card-body">
 			
 			<p class="card-text"><?php while($row_today = mysqli_fetch_assoc($result_today)) { 
@@ -343,7 +343,7 @@ function stop_server() {
 
 	<div id="topintent" style="padding-top:2em;padding-bottom:2em;"></div>
 <div class="card">
-		<h5 class="card-header">Top today intents</h5>
+		<h5 class="card-header">Top Today Intents</h5>
 		<div class="card-body">
 			
 			<div class="row">
