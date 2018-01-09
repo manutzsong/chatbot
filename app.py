@@ -256,7 +256,17 @@ def handle_text_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextMessage(text="Exist"))
-            
+    elif text == '!survey':
+        line_bot_api.reply_message(
+                event.reply_token, [
+                    tell_enter,
+                    gender_message,
+                    year_message,
+                    year_message2,
+                    school_message
+
+                    ]
+            )        
             
     
     elif text == '!register':
@@ -503,13 +513,71 @@ def handle_content_message(event):
         line_bot_api.reply_message(
                 event.reply_token,
                 TextMessage(text="Not allow to use this feature"))
+#weird to place here timeout thing wtf SURVEY
+year_template = ButtonsTemplate(
+        title='What\' your year ?', text='Select year of study ?', actions=[
+            
+            PostbackTemplateAction(label='1st Year', data='1year'),
+            PostbackTemplateAction(label='2nd Year', data='2year'),
+            PostbackTemplateAction(label='3nd Year', data='3year'),
+            PostbackTemplateAction(label='More to select below', data='nothing')
+            
+        ])
+year_message = TemplateSendMessage(
+    alt_text='Buttons alt text', template=year_template)
+
+year_template2 = ButtonsTemplate(
+        title='(Continue)What\' your year ?', text='Select year of study ?', actions=[
+            PostbackTemplateAction(label='4th Year', data='4year'),
+            PostbackTemplateAction(label='More than 4 year', data='5year')
+            
+        ])
+year_message2 = TemplateSendMessage(
+    alt_text='Buttons alt text', template=year_template2)
+
+school_template = ButtonsTemplate(
+        title='What is your school ?', text='Select school', actions=[
+            PostbackTemplateAction(label='B.B.A.', data='bba'),
+            PostbackTemplateAction(label='Communication Arts', data='ca'),
+            PostbackTemplateAction(label='Arts', data='arts'),
+            PostbackTemplateAction(label='Other', data='other_school')
+            
+        ])
+school_message = TemplateSendMessage(
+    alt_text='Buttons alt text', template=school_template)
+
+tell_enter = TextSendMessage(text='Please tell us following question \n \n Gender \n Currently year study \n School \n \n Once done press Confirm in confirm dialogue')
+gender_template = ButtonsTemplate(
+    title='What\' your gender ?', text='Male or Female ?', actions=[
+        
+        PostbackTemplateAction(label='Male', data='Male'),
+        PostbackTemplateAction(label='Female', data='Female')
+    ])
+gender_message = TemplateSendMessage(
+    alt_text='Buttons alt text', template=gender_template)
+
+#END SURVEY
+
 
 
 @handler.add(FollowEvent)
 def handle_follow(event):
-    line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text='Got follow event'))
 
+    
+    sql_join = "INSERT INTO `line_user` (`id`, `uid`, `sex`, `year`, `major`, `date_create`) VALUES (NULL, %s, NULL, NULL, NULL, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `uid` = %s;"
+    cur.execute(sql_join, (event.source.user_id,event.source.user_id,))
+    conn.commit()
+    line_bot_api.reply_message(
+                event.reply_token, [
+                    tell_enter,
+                    gender_message,
+                    year_message,
+                    year_message2,
+                    school_message
+
+                    ]
+            )
+   
 
 @handler.add(UnfollowEvent)
 def handle_unfollow():
@@ -527,12 +595,145 @@ def handle_join(event):
 def handle_leave():
     app.logger.info("Got leave event")
 
-
+#HANDLE POSTBACK
 @handler.add(PostbackEvent)
 def handle_postback(event):
     if event.postback.data == 'ping':
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='pong'))
+    #select gender        
+    if event.postback.data == 'Male':
+        gender = 1
+        sql_male = "SELECT `sex` FROM `line_user` WHERE `uid`=%s AND `sex` IS NOT NULL"
+        cur.execute(sql_male, (event.source.user_id,))
+        if not cur.rowcount:
+            #UPDATE `line_user` SET `sex` = %s WHERE `line_user`.`uid` = %s;
+            sql = "UPDATE `line_user` SET `sex` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (gender,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'re Male'))
+        
+    if event.postback.data == 'Female':
+        gender = 0
+        
+        sql_male = "SELECT `sex` FROM `line_user` WHERE `uid`=%s AND `sex` IS NOT NULL;"
+        cur.execute(sql_female, (event.source.user_id,))
+        if not cur.rowcount:
+            #UPDATE `line_user` SET `sex` = %s WHERE `line_user`.`uid` = %s;
+            sql = "UPDATE `line_user` SET `sex` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (gender,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'re Female'))
+
+    #Select year 
+               
+    if event.postback.data == '1year':
+        stu_year = 1
+        sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
+        cur.execute(sql_year, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (stu_year,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'re 1st Year student'))
+    if event.postback.data == '2year':
+        stu_year = 2
+        sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
+        cur.execute(sql_year, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (stu_year,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'re 2nd Year student'))
+    if event.postback.data == '3year':
+        stu_year = 3
+        sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
+        cur.execute(sql_year, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (stu_year,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'re 3rd Year student'))
+    if event.postback.data == '4year':
+        stu_year = 4
+        sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
+        cur.execute(sql_year, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (stu_year,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'re 4th Year student'))
+    #school
+    if event.postback.data == 'ca':
+        school = 'ca'
+        sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
+        cur.execute(sql_maj, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (school,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'ve select Communication Arts'))
+    if event.postback.data == 'bba':
+        school = 'bba'
+        sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
+        cur.execute(sql_maj, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (school,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'ve select Management and Economics'))            
+    if event.postback.data == 'arts':
+        school = 'arts'
+        sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
+        cur.execute(sql_maj, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (school,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'ve select Arts'))
+    if event.postback.data == 'other_school':
+        school = 'other_school'
+        sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
+        cur.execute(sql_maj, (event.source.user_id,))
+        if not cur.rowcount:
+            
+            sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
+            cur.execute(sql, (school,event.source.user_id,))
+            conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'ve select Other'))
+    #school
+    if event.postback.data == 'bs':
+        school = 'bs'
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'ve select B.S.'))
+    if event.postback.data == 'barch':
+        school = 'barch'
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'ve select B.Arch'))
+    if event.postback.data == 'llb':
+        school = 'llb'
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='You\'ve select School of Law (LL.B.)'))
+    
+    
+        
 
 
 @handler.add(BeaconEvent)
