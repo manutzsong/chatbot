@@ -7,7 +7,7 @@ session_start();
 if (!$_SESSION["logas"]) {
 	header("Location: index.php");
 }
-
+$loged = $_SESSION["logas"];
 
   
 

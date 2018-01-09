@@ -1,5 +1,5 @@
 <?php
-include('ssh_conf.php');
+include('conf.php');
 set_include_path('../SSHa');
 include('Net/SSH2.php');
 

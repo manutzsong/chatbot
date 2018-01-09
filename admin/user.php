@@ -7,7 +7,7 @@ session_start();
 if (!$_SESSION["logas"]) {
 	header("Location: index.php");
 }
-
+$loged = $_SESSION["logas"];
 mysqli_set_charset($con,"utf8mb4");
 $sqlmute = "select * from mute";
 $resultmute = mysqli_query($con, $sqlmute);
@@ -274,9 +274,9 @@ function show_status() {
 			<div class="row">
 				<div class="col-md-2"></div>
 				<div class="col-md-3"><h6>ID</h6></div>
-				<div class="col-md-3"><h6>UID</h6></div>
+				<div class="col-md-4"><h6>UID</h6></div>
 				<div class="col-md-2"><h6>Date Regist</h6></div>
-				<div class="col-md-2"></div>
+				<div class="col-md-1"></div>
 			</div>
 
 			<?php
@@ -286,12 +286,12 @@ function show_status() {
 							<div class='col-md-3'>"
 								.$row_reg['id'].
 							"</div>
-							<div class='col-md-3'>"
+							<div class='col-md-4'>"
 								.$row_reg['uid'].
 							"</div>
 							<div class='col-md-2'>"
 								.$row_reg['date_create'].
-							"</div><div class='col-md-2'></div>
+							"</div><div class='col-md-1'></div>
 						  </div>"; 
 					
 				} ?></div>

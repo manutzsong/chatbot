@@ -7,6 +7,7 @@ session_start();
 if (!$_SESSION["logas"]) {
 	header("Location: index.php");
 }
+$loged = $_SESSION["logas"];
 mysqli_set_charset($con,"utf8mb4");
 //Top 10 Intent
 $sql_intent = "SELECT * FROM `intent` ORDER BY `time` DESC LIMIT 10";

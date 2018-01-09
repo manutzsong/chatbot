@@ -7,7 +7,7 @@ session_start();
 if (!$_SESSION["logas"]) {
 	header("Location: index.php");
 }
-
+$loged = $_SESSION["logas"];
 $sql_line = "SELECT id, DATE_FORMAT(date, '%Y,%l,%d') AS 'date', count_traffic FROM traffic";
 $result_line = mysqli_query($con, $sql_line);
 

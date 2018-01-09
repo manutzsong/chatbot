@@ -18,13 +18,13 @@ $exploded=preg_split('/\s+/',$result_ssh); //Limit is unspecified, so it will re
 
 
 
-$result->name = $exploded[0];
-$result->status = $exploded[1];
-$result->pid = $exploded[3];
-$result->uptime = $exploded[5];
+//$result->name = $exploded[0];
+//$result->status = $exploded[1];
+//$result->pid = $exploded[3];
+//$result->uptime = $exploded[5];
 
 
-$result_json = json_encode($result);
+//$result_json = json_encode($result);
 
 //echo $result_json;
 echo json_encode($exploded);

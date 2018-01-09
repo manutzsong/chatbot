@@ -36,7 +36,7 @@ if ($_SESSION["logas"]) {
        success: function(data)
        {
           if (data == 'Login') {
-            window.location = 'view.php';
+            window.location = 'landing.php';
           }
           else {
             alert('Invalid Credentials');
