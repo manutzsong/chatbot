@@ -617,7 +617,7 @@ def handle_postback(event):
     if event.postback.data == 'Female':
         gender = 0
         
-        sql_male = "SELECT `sex` FROM `line_user` WHERE `uid`=%s AND `sex` IS NOT NULL;"
+        sql_female = "SELECT `sex` FROM `line_user` WHERE `uid`=%s AND `sex` IS NOT NULL;"
         cur.execute(sql_female, (event.source.user_id,))
         if not cur.rowcount:
             #UPDATE `line_user` SET `sex` = %s WHERE `line_user`.`uid` = %s;
