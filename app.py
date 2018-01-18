@@ -73,7 +73,7 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 found_it = 0
 #MYSQL
 #MYSQL
-conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='128029486', db='saveme',charset='utf8mb4')
+conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='xxxxx', db='saveme',charset='utf8mb4')
 cur = conn.cursor()
 
 
