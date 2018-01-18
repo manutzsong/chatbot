@@ -1,12 +1,12 @@
 <?php
 
-$host_ssh = 'dreamcatcherbkk.me';
-$user_ssh = 'root';
-$pw_ssh = '128029486';
+$host_ssh = 'xxxxxxxxxxxxxxxxxxxxx';
+$user_ssh = 'xxxxxxxxx';
+$pw_ssh = 'xxxxxx';
 
 $serverName	  = "localhost";
 $userName	  = "root";
-$userPassword	  = "128029486";
+$userPassword	  = "xxxxxxxxxx";
 $dbName	  = "saveme";
 $con = mysqli_connect($serverName,$userName,$userPassword,$dbName);
 
