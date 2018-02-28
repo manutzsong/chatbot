@@ -96,13 +96,11 @@ function show_status() {
 					$('#comeon2').css("color", "white");
 					$('#s1').css("color", "white");
 					
-					$('#comeon3').text(result[3]);
-					$('#comeon4').text(result[5]);
+
 					$('#s2').text(result[3]);
 					$('#s3').text(result[5]);
 					
-					$('#comeon3').css("color", "white");
-					$('#comeon4').css("color", "#4CAF50");
+
 					$('#s2').css("color", "black");
 					$('#s3').css("color", "white");
 					$('#s3').css("background-color", "#4CAF50");
@@ -113,7 +111,6 @@ function show_status() {
 					$('#comeon2').text('Offline');
 					$('#comeon2').css("background-color", "red");
 					$('#comeon2').css("color", "white");
-					$('#comeon4').css("color", "red");
 					
 					$('#s1').text('Offline');
 					$('#s1').css("background-color", "red");
@@ -125,7 +122,50 @@ function show_status() {
 
             },
         });
+	
 		
+	$.ajax({
+            type: 'POST',
+            url: './func/traffic_status.php',
+            
+            dataType: 'json',
+            
+            success: function(result) {
+                //$('#comeon1').text(result[0]);
+				if (result[1] == 'RUNNING') {
+					$('#comeon3').text('Online');
+					$('#t1').text('Online');
+					$('#comeon3').css("background-color", "#4CAF50");
+					$('#t1').css("background-color", "#4CAF50");
+					$('#comeon3').css("color", "white");
+					$('#t1').css("color", "white");
+					
+
+					$('#t2').text(result[3]);
+					$('#t3').text(result[5]);
+					
+
+					$('#t2').css("color", "black");
+					$('#t3').css("color", "white");
+					$('#t3').css("background-color", "#4CAF50");
+					
+				}
+				else {
+					
+					$('#comeon3').text('Offline');
+					$('#comeon3').css("background-color", "red");
+					$('#comeon3').css("color", "white");
+					
+					$('#t1').text('Offline');
+					$('#t1').css("background-color", "red");
+					$('#t1').css("color", "white");
+					$('#t1').css("color", "red");
+						
+				}
+				
+
+            },
+        });	
 }
 
 function start_server() {
@@ -227,6 +267,23 @@ function reload_log() {
 
             },
         });
+	
+	$.ajax({
+            type: 'POST',
+            url: './func/traffic_detail.php',
+            
+            //dataType: 'json',
+			beforeSend: function() {
+				
+                
+            },
+            
+            success: function(data) {
+                var convert = nl2br(data);
+				$('#log_traffic').html(data);
+
+            },
+        });
 		
 }
 
@@ -268,6 +325,83 @@ function update_usage() {
 				$('#r2').text(result[1]);
 				$('#r4').text(result[2]);
 				$('#r5').text(result[3]);
+
+            },
+        });
+		
+}
+//Traffic
+function start_traffic() {
+	
+	$.ajax({
+            type: 'POST',
+            url: './func/traffic_start.php',
+            
+            //dataType: 'json',
+			beforeSend: function() {
+				$('#t1').css("background-color", "white");
+				$('#t1').html('<img class="img_spin" src="Ellipsis.gif">');
+				
+				$('#t2').css("background-color", "white");
+				$('#t2').html('<img class="img_spin" src="Ellipsis.gif">');
+				
+				$('#t3').css("background-color", "white");
+				$('#t3').html('<img class="img_spin" src="Ellipsis.gif">');
+                
+            },
+            
+            success: function(result) {
+                //$('#comeon1').text(result[0]);
+				if (result == 'work') {
+					show_status();
+					reload_log();
+					
+				}
+				else {
+					show_status();
+					reload_log();
+
+						
+				}
+				
+
+            },
+        });
+		
+}
+function stop_traffic() {
+	
+	$.ajax({
+            type: 'POST',
+            url: './func/traffic_stop.php',
+            
+            //dataType: 'json',
+			beforeSend: function() {
+				$('#t1').css("background-color", "white");
+				$('#t1').html('<img class="img_spin" src="Ellipsis.gif">');
+				
+				$('#t2').css("background-color", "white");
+				$('#t2').html('<img class="img_spin" src="Ellipsis.gif">');
+				
+				$('#t3').css("background-color", "white");
+				$('#t3').html('<img class="img_spin" src="Ellipsis.gif">');
+                
+            },
+            
+            success: function(result) {
+                //$('#comeon1').text(result[0]);
+				if (result == 'work') {
+					show_status();
+					reload_log();
+					
+				}
+				else {
+					show_status();
+					reload_log();
+
+						
+				}
+				
 
             },
         });
@@ -339,7 +473,7 @@ function update_usage() {
 <ul class="nav navbar-nav mx-auto" href="#">	
 	<li class="nav-item">  
 			
-				<span id="comeon1"></span> Status : <span id="comeon2">...</span> PID : <span id="comeon3">...</span> Uptime : <span id="comeon4">...</span>
+				<span id="comeon1"></span> Chatbot : <span id="comeon2">...</span> Traffic : <span id="comeon3">...</span>
 			
 	</li>
 </ul>
@@ -369,6 +503,10 @@ function update_usage() {
 				<h6>Chatbot  PID : <span id="s2">Undefined</span></h6>
 				<h6>Chatbot  Uptime : <span id="s3">Undefined</span></h6>	
 				<br><br>
+				<h6>Traffic Status : <span id="t1">Undefined</span></h6>
+				<h6>Traffic  PID : <span id="t2">Undefined</span></h6>
+				<h6>Traffic  Uptime : <span id="t3">Undefined</span></h6>	
+				<br><br>
 				<h6>Server Memory Usage : <span id="r1"></span></h6>	
 				<h6>Server CPU Usage : <span id="r2"></span></h6>	
 				<h6>Server Uptime : <span id="r3">Undefined</span></h6>	
@@ -376,20 +514,25 @@ function update_usage() {
 				<h6>Server Space Available : <span id="r4"></span></h6>	
 				<h6>Server Space Total : <span id="r5"></span></h6>	
 				<br><br>
-				<h6>Server Log : </h6>
+				<h6>Chatbot Log : </h6>
 				<br>
 				<br>
-				<div id="log" class="pre-scrollable2">
-					
-				</div>
-				
+				<div id="log" class="pre-scrollable2"></div>
+				<h6>Traffic Log : </h6>
+				<br>
+				<br>
+				<div id="log_traffic" class="pre-scrollable2"></div>
 				
 			</div>
-			<div class="col-md-2"><h6>Server Control</h6>
+			<div class="col-md-2"><h6>Chatbot Control</h6>
 
 				<button class="btn btn-success btn-block" onClick="start_server();">Start</button>
 				<button class="btn btn-danger btn-block" data-toggle="modal" data-target="#stop_modal">Stop</button>
-				
+				<br>
+				<hr>
+				<h6>Traffic Control</h6>
+				<button class="btn btn-success btn-block" onClick="start_traffic();">Start</button>
+				<button class="btn btn-danger btn-block" data-toggle="modal" data-target="#stop_traffic_modal">Stop</button>
 			</div>
 			</div>
 		</div>
@@ -439,6 +582,26 @@ function update_usage() {
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Keep it running</button>
         <button type="button" class="btn btn-primary" onClick="stop_server();">Stop Server</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stop_traffic_modal" tabindex="-1" role="dialog" aria-labelledby="stop_traffic" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="stop_traffic">Stop Server ?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to <span style="color:red">STOP</span> Traffic server ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Keep it running</button>
+        <button type="button" class="btn btn-primary" onClick="stop_traffic();">Stop Server</button>
       </div>
     </div>
   </div>

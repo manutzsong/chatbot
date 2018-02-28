@@ -78,9 +78,9 @@ server {
 	# deny access to .htaccess files, if Apache's document root
 	# concurs with nginx's one
 	#
-	location ~ /\.ht {
-		deny all;
-	}
+	#location ~ /\.ht {
+	#	deny all;
+	#}
 
     listen 443 ssl; # managed by Certbot
 ssl_certificate /etc/letsencrypt/live/dreamcatcherbkk.me/fullchain.pem; # managed by Certbot

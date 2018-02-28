@@ -9,11 +9,11 @@ if (!$ssh->login($user_ssh, $pw_ssh)) {
     exit('Login Failed');
 }
 
-$ssh->exec('rm /home'.$path.'gunicorn_stdout.log');
+$ssh->exec('rm /home'.$path.'stats2_out.log');
 
-$ssh->exec('supervisorctl stop chatbot');
+$ssh->exec('supervisorctl stop stats');
 
-$result_ssh = $ssh->exec('supervisorctl status chatbot');
+$result_ssh = $ssh->exec('supervisorctl status stats');
 $exploded=preg_split('/\s+/',$result_ssh); //Limit is unspecified, so it will return all the substrings;	
 
 if ($exploded[1] == 'RUNNING') {

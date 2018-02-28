@@ -6,12 +6,14 @@
 	$received_username = mysqli_real_escape_string($con,$_POST['username']);
 	$received_password = mysqli_real_escape_string($con,$_POST['password']);
 	
-	$query = "SELECT `username` FROM `user` WHERE `username` = '$received_username' AND `password` = '$received_password'";
+	$query = "SELECT `password`,`username` FROM `user` WHERE `username` = '$received_username'";
 	$run_query = mysqli_query($con,$query);
 	$result = mysqli_fetch_assoc($run_query);
-	if ($result == true) {
+	$hashed = $result['password'];
+	
 
-			$logas = $result['username'];
+	if (password_verify($received_password, $hashed)) {
+		$logas = $result['username'];
 
 		
 		
@@ -22,12 +24,8 @@
 		session_write_close();
 		
 		echo "Login";
-		
-		
-		
-		
-		
 	}
+	
 	
 	
 	

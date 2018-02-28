@@ -9,7 +9,7 @@ if (!$ssh->login($user_ssh, $pw_ssh)) {
     exit('Login Failed');
 }
 
-$ssh->exec('> /home/u5712694/chatbot/gunicorn_stdout.log');
+$ssh->exec('rm /home'.$path.'gunicorn_stdout.log');
 
 $ssh->exec('supervisorctl restart chatbot');
 

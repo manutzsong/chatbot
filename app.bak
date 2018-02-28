@@ -13,7 +13,7 @@
 #  under the License.
 
 from __future__ import unicode_literals
-from keras.preprocessing.text import text_to_word_sequence
+
 import errno
 import os
 import sys
@@ -43,12 +43,15 @@ from linebot.models import (
     ImageMessage, VideoMessage, AudioMessage,
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
-
+#IMPORT FROM survey.py
+from survey import *  
 
 
 app = Flask(__name__)
-
+#CONFIG PART FOR VARIOUS VAR
 # get channel_secret and channel_access_token from your environment variable
+admin_pw = '12345678'
+CLIENT_ACCESS_TOKEN = '37f9249f8aea441083ad7647807be5ee'
 channel_secret = '63efbc2b1de481db60cebcda66f8a6f2'
 channel_access_token = 'dZnflRA5ac/U2hZ/Ado81F+t0H8yobXp2IbezUD9ONlaALDmhQED++LxMt9LU2/HX8b4SjSvbgemXAY+cF9uziWIhYLYzyU9uKCBAXMlXY4AISmxnlOzrx0DLnR9a6r/duACcHSjRxCNsZqGNCqL3gdB04t89/1O/w1cDnyilFU='
 if channel_secret is None:
@@ -62,7 +65,7 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
 
-CLIENT_ACCESS_TOKEN = '37f9249f8aea441083ad7647807be5ee'
+
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
@@ -70,10 +73,10 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
 
 
-admin_pw = "12345678"
+found_it = 0
 #MYSQL
 #MYSQL
-conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='128029486', db='keras',charset='utf8mb4')
+conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='128029486', db='saveme',charset='utf8mb4')
 cur = conn.cursor()
 
 
@@ -97,8 +100,8 @@ def callback():
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
-
-
+    
+    
     # handle webhook body
     try:
         handler.handle(body, signature)
@@ -108,13 +111,31 @@ def callback():
     return 'OK'
 
 
-
+    
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
 
-    #End lastuse update
+    try:
+        get_name = line_bot_api.get_profile(event.source.user_id)
+        username = get_name.display_name
+    except:
+        username = event.source.user_id
+    
 
+    #Update lastuse
+    #INSERT INTO `most` (`id`, `uid`, `last_see`, `date_create`) VALUES (NULL, '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    uid = event.source.user_id
+    sql_most = "INSERT INTO `most` (`id`, `uid`, `prof_name`, `time_usage`, `last_see`,`date_create`) VALUES (NULL, %s, %s, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `last_see` = CURRENT_TIMESTAMP, `time_usage` = (@cur_value := time_usage) + 1"
+    cur.execute(sql_most, (uid,username))
+    conn.commit()
+
+
+    
+
+
+    #End lastuse update
+    
     if text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
@@ -194,9 +215,9 @@ def handle_text_message(event):
                     event.reply_token,
                     TextMessage(text="Unmute Successful"))
         conn.commit()
-
-
-
+        
+        
+        
     elif text == '!mute':
         if isinstance(event.source, SourceGroup):
             #event.source.group_id
@@ -208,44 +229,51 @@ def handle_text_message(event):
                 cur.execute(sql, (event.source.group_id))
                 conn.commit()
 
-
-
-
+                
+                
+            
                 line_bot_api.reply_message(
                         event.reply_token,
                         TextMessage(text="Mute LOL"))
 
 
-
+                
             else:
-
-
+                
+                
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextMessage(text="Already Mute"))
-
-
-
+                
+            
+                
         else:
             line_bot_api.reply_message(
                         event.reply_token,
                         TextMessage(text="Aint group bro"))
 
+    elif text =='!check':
+        sql3 = "SELECT * FROM `register` WHERE `uid`=%s"
+        cur.execute(sql3, (event.source.user_id,))
+        if cur.rowcount:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Exist"))
+    elif text == '!survey':
+        sql_join = "INSERT INTO `line_user` (`id`, `uid`, `sex`, `year`, `major`, `date_create`) VALUES (NULL, %s, NULL, NULL, NULL, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `uid` = %s;"
+        cur.execute(sql_join, (event.source.user_id,event.source.user_id,))
+        conn.commit()
+        line_bot_api.reply_message(
+                event.reply_token, [
+                    tell_enter,
+                    gender_message,
+                    year_message,
+                    year_message2,
+                    school_message
 
-##    elif text == '!survey':
-##        line_bot_api.reply_message(
-##                event.reply_token, [
-##                    tell_enter,
-##                    gender_message,
-##                    year_message,
-##                    year_message2,
-##                    school_message
-##
-##                    ]
-##            )
-
-
-
+                    ]
+            )
+    #Call register admin module / function
     elif '!admin' in text:
         process_register = text.split()
         try:
@@ -253,7 +281,7 @@ def handle_text_message(event):
                 line_bot_api.reply_message(
                         event.reply_token,
                         TextMessage(text="Wrong Password"))
-            elif process_register[3] == admin_pw:
+            else:
                 sql2 = "SELECT `uid`,`username` FROM `user` WHERE `uid` = %s AND `username` = %s"
                 cur.execute(sql2, (event.source.user_id,process_register[1],))
                 if not cur.rowcount:
@@ -267,49 +295,176 @@ def handle_text_message(event):
                     line_bot_api.reply_message(
                             event.reply_token,
                             TextMessage(text=reply_invoke))
-        except Exception as e:
-            print(e)
+        except:
+            line_bot_api.reply_message(
+                        event.reply_token,
+                        TextMessage(text="Empty Password"))
+                
+    
+    elif text in '!register':
+        
+        
+        
+        sql2 = "SELECT * FROM `register` WHERE `uid`=%s"
+        cur.execute(sql2, (event.source.user_id,))
+        if not cur.rowcount:
+            #INSERT INTO `register` (`id`, `uid`, `date_create`) VALUES (NULL, '1', CURRENT_TIMESTAMP);
+            sql = "INSERT INTO `register` (`id`, `uid`, `date_create`) VALUES (NULL, %s, CURRENT_TIMESTAMP)"
+            cur.execute(sql, (event.source.user_id))
+            conn.commit()
+            line_bot_api.reply_message(
+                    event.reply_token,
+                    TextMessage(text="Register your ID"))
+            
+            
+            
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Already Register"))
+            
+            
 
+        
     else:
-
+        
         if isinstance(event.source, SourceGroup):
-
+            
             sql4 = "SELECT * FROM `mute` WHERE `group_id`=%s"
             cur.execute(sql4, (event.source.group_id,))
             if cur.rowcount == 0:
-                result_word = text_to_word_sequence(text)
-                print(result_word)
+                
+                ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 
-                line_bot_api.reply_message(
-                    event.reply_token, TextSendMessage(text=text))
+                request = ai.text_request()
 
+                request.lang = 'en'  # optional, default value equal 'en'
+
+                request.session_id = event.source.user_id
+                print(event.source.user_id)
+
+                request.query = text
+
+                # Receiving the response.
+                response = json.loads(request.getresponse().read().decode('utf-8'))
+                responseStatus = response['status']['code']
+
+                #speech_this = response['result']['fulfillment']['speech']
+                
+                #print(fulfillment)
+                #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
+                try:
+                    intent = response['result']['metadata']['intentName']
+                except Exception as e:
+                    intent = response['result']['action']
+
+                try:
+                    intent_id = response['result']['metadata']['intentId']
+                except Exception as e:
+                    intent_id = "smalltalk.greetings.hello"
+                
+                
+
+                #sql7 = "UPDATE `intent` SET `time`=(@cur_value := time) + 1 WHERE `intent` = %s"
+                #cur.execute(sql7, (intent,))
+                
+                
+                try:
+                    
+                    
+
+                    if response['result']['fulfillment']['messages'][0]['payload']['type'] == 'location':
+                        title_load = response['result']['fulfillment']['messages'][0]['payload']['title']
+                        address_load = response['result']['fulfillment']['messages'][0]['payload']['address']
+                        lat_load = response['result']['fulfillment']['messages'][0]['payload']['lat']
+                        lon_load = response['result']['fulfillment']['messages'][0]['payload']['lon']
+                        line_bot_api.reply_message(
+                                event.reply_token, LocationSendMessage(title=title_load, address=address_load, latitude=lat_load, longitude=lon_load))
+
+                    elif response['result']['fulfillment']['messages'][0]['payload']['type'] == 'image':
+                        line_bot_api.reply_message(
+                            event.reply_token, ImageSendMessage(
+                                original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
+                                preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
+                            )
+                except Exception as e:
+                    
+
+                    
+                    maybe = response['result']['fulfillment']['messages'][0]['speech']
+                    line_bot_api.reply_message(
+                        event.reply_token, TextSendMessage(text=maybe))
             else:
-                pass
+                try:
+                    intent = response['result']['metadata']['intentName']
+                except Exception as e:
+                    intent = response['result']['action']
+
+                try:
+                    intent_id = response['result']['metadata']['intentId']
+                except Exception as e:
+                    intent_id = "smalltalk.greetings.hello"
+                
+
+                
+                
                 #line_bot_api.reply_message(
                 #    event.reply_token, TextSendMessage(text='Unmute me first with command !unmute '))
 
 
-
+            
         else:
-            result_word = text_to_word_sequence(text)
-            print(result_word)
-            text_array = ",".join(str(bit) for bit in result_word)
+            ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 
-            sql = "INSERT INTO `chat_log` (`id`, `uid`, `message`, `time_log`) VALUES (NULL, %s, %s, CURRENT_TIMESTAMP);"
-            cur.execute(sql, (event.source.user_id,text_array))
+            request = ai.text_request()
 
-            conn.commit()
+            request.lang = 'en'  # optional, default value equal 'en'
 
-            line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text=text_array))
-        #     # define the document
-        #     # text = 'The quick brown fox jumped over the lazy dog.'
-        #     # tokenize the document
-        #     result_word = text_to_word_sequence(text, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
-        #     #print(result)
+            request.session_id = event.source.user_id
+            print(event.source.user_id)
 
-        #     line_bot_api.reply_message(
-        #         event.reply_token, TextSendMessage(text=result_word))
+            request.query = text
+
+            # Receiving the response.
+            response = json.loads(request.getresponse().read().decode('utf-8'))
+            responseStatus = response['status']['code']
+
+            #speech_this = response['result']['fulfillment']['speech']
+            
+            #print(fulfillment)
+            #print(response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'])
+            try:
+                if response['result']['fulfillment']['messages'][0]['payload']['type'] == 'location':
+                    title_load = response['result']['fulfillment']['messages'][0]['payload']['title']
+                    address_load = response['result']['fulfillment']['messages'][0]['payload']['address']
+                    lat_load = response['result']['fulfillment']['messages'][0]['payload']['lat']
+                    lon_load = response['result']['fulfillment']['messages'][0]['payload']['lon']
+                    line_bot_api.reply_message(
+                            event.reply_token, LocationSendMessage(title=title_load, address=address_load, latitude=lat_load, longitude=lon_load))
+
+                elif response['result']['fulfillment']['messages'][0]['payload']['type'] == 'image':
+                    line_bot_api.reply_message(
+                        event.reply_token, ImageSendMessage(
+                            original_content_url=response['result']['fulfillment']['messages'][0]['payload']['originalContentUrl'],
+                            preview_image_url=response['result']['fulfillment']['messages'][0]['payload']['previewImageUrl'])
+                        )
+            except Exception as e:
+                try:
+                    intent = response['result']['metadata']['intentName']
+                except Exception as e:
+                    intent = response['result']['action']
+
+                try:
+                    intent_id = response['result']['metadata']['intentId']
+                except Exception as e:
+                    intent_id = "smalltalk.greetings.hello"
+                
+                
+
+                
+                maybe = response['result']['fulfillment']['messages'][0]['speech']
+                line_bot_api.reply_message(
+                    event.reply_token, TextSendMessage(text=maybe))
 
 
 ##    @handler.add(MessageEvent, message=LocationMessage)
@@ -334,112 +489,69 @@ def handle_text_message(event):
 
 
 # Other Message Type
-##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
-##def handle_content_message(event):
-##    sql7 = "SELECT * FROM `register` WHERE `uid`=%s"
-##    cur.execute(sql7, (event.source.user_id,))
-##
-##
-##    if cur.rowcount:
-##
-##        if isinstance(event.message, ImageMessage):
-##            ext = 'jpg'
-##        elif isinstance(event.message, VideoMessage):
-##            ext = 'mp4'
-##        elif isinstance(event.message, AudioMessage):
-##            ext = 'm4a'
-##        else:
-##            return
-##
-##        message_content = line_bot_api.get_message_content(event.message.id)
-##        with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
-##            for chunk in message_content.iter_content():
-##                tf.write(chunk)
-##            tempfile_path = tf.name
-##
-##        dist_path = tempfile_path + '.' + ext
-##        dist_name = os.path.basename(dist_path)
-##        os.rename(tempfile_path, dist_path)
-##
-##        line_bot_api.reply_message(
-##            event.reply_token, [
-##                TextSendMessage(text='Save content.'),
-##                TextSendMessage(text=request.host_url + os.path.join('line/static', 'tmp', dist_name))
-##            ])
-##
-##
-##
-##    else:
-##
-##
-##        line_bot_api.reply_message(
-##                event.reply_token,
-##                TextMessage(text="Not allow to use this feature"))
-###weird to place here timeout thing wtf SURVEY
-##year_template = ButtonsTemplate(
-##        title='What\' your year ?', text='Select year of study ?', actions=[
-##
-##            PostbackTemplateAction(label='1st Year', data='1year'),
-##            PostbackTemplateAction(label='2nd Year', data='2year'),
-##            PostbackTemplateAction(label='3nd Year', data='3year'),
-##            PostbackTemplateAction(label='More to select below', data='nothing')
-##
-##        ])
-##year_message = TemplateSendMessage(
-##    alt_text='Buttons alt text', template=year_template)
-##
-##year_template2 = ButtonsTemplate(
-##        title='(Continue)What\' your year ?', text='Select year of study ?', actions=[
-##            PostbackTemplateAction(label='4th Year', data='4year'),
-##            PostbackTemplateAction(label='More than 4 year', data='5year')
-##
-##        ])
-##year_message2 = TemplateSendMessage(
-##    alt_text='Buttons alt text', template=year_template2)
-##
-##school_template = ButtonsTemplate(
-##        title='What is your school ?', text='Select school', actions=[
-##            PostbackTemplateAction(label='B.B.A.', data='bba'),
-##            PostbackTemplateAction(label='Communication Arts', data='ca'),
-##            PostbackTemplateAction(label='Arts', data='arts'),
-##            PostbackTemplateAction(label='Other', data='other_school')
-##
-##        ])
-##school_message = TemplateSendMessage(
-##    alt_text='Buttons alt text', template=school_template)
-##
-##tell_enter = TextSendMessage(text='Please tell us following question \n \n Gender \n Currently year study \n School \n \n Once done press Confirm in confirm dialogue')
-##gender_template = ButtonsTemplate(
-##    title='What\' your gender ?', text='Male or Female ?', actions=[
-##
-##        PostbackTemplateAction(label='Male', data='Male'),
-##        PostbackTemplateAction(label='Female', data='Female')
-##    ])
-##gender_message = TemplateSendMessage(
-##    alt_text='Buttons alt text', template=gender_template)
-##
-###END SURVEY
-##
-##
-##
-##@handler.add(FollowEvent)
-##def handle_follow(event):
-##
-##
-##    sql_join = "INSERT INTO `line_user` (`id`, `uid`, `sex`, `year`, `major`, `date_create`) VALUES (NULL, %s, NULL, NULL, NULL, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `uid` = %s;"
-##    cur.execute(sql_join, (event.source.user_id,event.source.user_id,))
-##    conn.commit()
-##    line_bot_api.reply_message(
-##                event.reply_token, [
-##                    tell_enter,
-##                    gender_message,
-##                    year_message,
-##                    year_message2,
-##                    school_message
-##
-##                    ]
-##            )
+@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
+def handle_content_message(event):
+    sql7 = "SELECT * FROM `register` WHERE `uid`=%s"
+    cur.execute(sql7, (event.source.user_id,))
 
+    
+    if cur.rowcount:
+        
+        if isinstance(event.message, ImageMessage):
+            ext = 'jpg'
+        elif isinstance(event.message, VideoMessage):
+            ext = 'mp4'
+        elif isinstance(event.message, AudioMessage):
+            ext = 'm4a'
+        else:
+            return
+
+        message_content = line_bot_api.get_message_content(event.message.id)
+        with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
+            for chunk in message_content.iter_content():
+                tf.write(chunk)
+            tempfile_path = tf.name
+
+        dist_path = tempfile_path + '.' + ext
+        dist_name = os.path.basename(dist_path)
+        os.rename(tempfile_path, dist_path)
+
+        line_bot_api.reply_message(
+            event.reply_token, [
+                TextSendMessage(text='Save content.'),
+                TextSendMessage(text=request.host_url + os.path.join('line/static', 'tmp', dist_name))
+            ])
+        
+        
+        
+    else:
+        
+        
+        line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Not allow to use this feature"))
+
+
+
+
+@handler.add(FollowEvent)
+def handle_follow(event):
+
+    
+    sql_join = "INSERT INTO `line_user` (`id`, `uid`, `sex`, `year`, `major`, `date_create`) VALUES (NULL, %s, NULL, NULL, NULL, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE `uid` = %s;"
+    cur.execute(sql_join, (event.source.user_id,event.source.user_id,))
+    conn.commit()
+    line_bot_api.reply_message(
+                event.reply_token, [
+                    tell_enter,
+                    gender_message,
+                    year_message,
+                    year_message2,
+                    school_message
+
+                    ]
+            )
+   
 
 @handler.add(UnfollowEvent)
 def handle_unfollow():
@@ -463,7 +575,7 @@ def handle_postback(event):
     if event.postback.data == 'ping':
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='pong'))
-    #select gender
+    #select gender        
     if event.postback.data == 'Male':
         gender = 1
         sql_male = "SELECT `sex` FROM `line_user` WHERE `uid`=%s AND `sex` IS NOT NULL"
@@ -475,10 +587,10 @@ def handle_postback(event):
             conn.commit()
         line_bot_api.reply_message(
                 event.reply_token, TextSendMessage(text='You\'re Male'))
-
+        
     if event.postback.data == 'Female':
         gender = 0
-
+        
         sql_female = "SELECT `sex` FROM `line_user` WHERE `uid`=%s AND `sex` IS NOT NULL;"
         cur.execute(sql_female, (event.source.user_id,))
         if not cur.rowcount:
@@ -489,14 +601,14 @@ def handle_postback(event):
         line_bot_api.reply_message(
                 event.reply_token, TextSendMessage(text='You\'re Female'))
 
-    #Select year
-
+    #Select year 
+               
     if event.postback.data == '1year':
         stu_year = 1
         sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
         cur.execute(sql_year, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (stu_year,event.source.user_id,))
             conn.commit()
@@ -507,7 +619,7 @@ def handle_postback(event):
         sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
         cur.execute(sql_year, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (stu_year,event.source.user_id,))
             conn.commit()
@@ -518,7 +630,7 @@ def handle_postback(event):
         sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
         cur.execute(sql_year, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (stu_year,event.source.user_id,))
             conn.commit()
@@ -529,7 +641,7 @@ def handle_postback(event):
         sql_year = "SELECT `year` FROM `line_user` WHERE `uid`=%s AND `year` IS NOT NULL;"
         cur.execute(sql_year, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `year` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (stu_year,event.source.user_id,))
             conn.commit()
@@ -541,7 +653,7 @@ def handle_postback(event):
         sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
         cur.execute(sql_maj, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (school,event.source.user_id,))
             conn.commit()
@@ -552,18 +664,18 @@ def handle_postback(event):
         sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
         cur.execute(sql_maj, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (school,event.source.user_id,))
             conn.commit()
         line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='You\'ve select Management and Economics'))
+                event.reply_token, TextSendMessage(text='You\'ve select Management and Economics'))            
     if event.postback.data == 'arts':
         school = 'arts'
         sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
         cur.execute(sql_maj, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (school,event.source.user_id,))
             conn.commit()
@@ -574,7 +686,7 @@ def handle_postback(event):
         sql_maj = "SELECT `major` FROM `line_user` WHERE `uid`=%s AND `major` IS NOT NULL;"
         cur.execute(sql_maj, (event.source.user_id,))
         if not cur.rowcount:
-
+            
             sql = "UPDATE `line_user` SET `major` = %s WHERE `line_user`.`uid` = %s;"
             cur.execute(sql, (school,event.source.user_id,))
             conn.commit()
@@ -593,9 +705,9 @@ def handle_postback(event):
         school = 'llb'
         line_bot_api.reply_message(
                 event.reply_token, TextSendMessage(text='You\'ve select School of Law (LL.B.)'))
-
-
-
+    
+    
+        
 
 
 @handler.add(BeaconEvent)
@@ -607,10 +719,12 @@ def handle_beacon(event):
 
 
 if __name__ == "__main__":
+    
 
-
-
-
+        
+            
     make_static_tmp_dir()
 
-    app.run(host='0.0.0.0',port=os.environ['PORT'])
+    app.run(host='127.0.0.1',port=os.environ['PORT'])
+    
+    

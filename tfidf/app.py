@@ -21,6 +21,8 @@ import tempfile
 import apiai
 import json
 import bcrypt
+import requests
+import re
 import pymysql
 
 from argparse import ArgumentParser
@@ -106,6 +108,7 @@ def callback():
         abort(400)
 
     return 'OK'
+
 
 
 
@@ -291,7 +294,18 @@ def handle_text_message(event):
 
 
         else:
-            result_word = text_to_word_sequence(text)
+            dev_confirm = ButtonsTemplate(
+                title='Right answer?', text='Please select', actions=[
+                    PostbackTemplateAction(label='Yes', data='yes_dev'),
+                    PostbackTemplateAction(label='No', data='no_dev')
+                ])
+            dev_confirm2 = TemplateSendMessage(
+                alt_text='Buttons alt text', template=dev_confirm)
+
+            regex = r"([a-zA-Z]+)\s+(?=\d)"
+            pre_number = re.sub(regex,"",text)
+            print(pre_number)
+            result_word = text_to_word_sequence(pre_number)
             print(result_word)
             text_array = ",".join(str(bit) for bit in result_word)
 
@@ -300,8 +314,15 @@ def handle_text_message(event):
 
             conn.commit()
 
+            r = requests.post("https://songpurin.me/admin/tfidf/pro.php", data={'line_text': text})
+            print(r.status_code, r.reason)
+            print(r.text)
+
             line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text=text_array))
+                event.reply_token, [
+                    TextSendMessage(text=r.text),
+                    dev_confirm2
+                    ])
         #     # define the document
         #     # text = 'The quick brown fox jumped over the lazy dog.'
         #     # tokenize the document
@@ -408,7 +429,7 @@ def handle_text_message(event):
 ##school_message = TemplateSendMessage(
 ##    alt_text='Buttons alt text', template=school_template)
 ##
-##tell_enter = TextSendMessage(text='Please tell us following question \n \n Gender \n Currently year study \n School \n \n Once done press Confirm in confirm dialogue')
+tell_enter = TextSendMessage(text='Currently developing \n \n !mute = Mute bot')
 ##gender_template = ButtonsTemplate(
 ##    title='What\' your gender ?', text='Male or Female ?', actions=[
 ##
@@ -439,6 +460,17 @@ def handle_text_message(event):
 ##
 ##                    ]
 ##            )
+
+
+
+@handler.add(FollowEvent)
+def handle_follow(event):
+   line_bot_api.reply_message(
+               event.reply_token, [
+                   tell_enter
+
+                   ]
+           )
 
 
 @handler.add(UnfollowEvent)
@@ -593,10 +625,11 @@ def handle_postback(event):
         school = 'llb'
         line_bot_api.reply_message(
                 event.reply_token, TextSendMessage(text='You\'ve select School of Law (LL.B.)'))
-
-
-
-
+    
+    if event.postback.data == 'no_dev':
+        select_last_request = requests.post("https://songpurin.me/admin/tfidf/select_last.php", data={'line_uid': event.source.user_id})
+        line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text=select_last_request.text))
 
 @handler.add(BeaconEvent)
 def handle_beacon(event):
