@@ -49,8 +49,8 @@ from linebot.models import (
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
-channel_secret = '63efbc2b1de481db60cebcda66f8a6f2'
-channel_access_token = 'dZnflRA5ac/U2hZ/Ado81F+t0H8yobXp2IbezUD9ONlaALDmhQED++LxMt9LU2/HX8b4SjSvbgemXAY+cF9uziWIhYLYzyU9uKCBAXMlXY4AISmxnlOzrx0DLnR9a6r/duACcHSjRxCNsZqGNCqL3gdB04t89/1O/w1cDnyilFU='
+channel_secret = ''
+channel_access_token = ''
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
     sys.exit(1)
@@ -62,7 +62,7 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
 
-CLIENT_ACCESS_TOKEN = '37f9249f8aea441083ad7647807be5ee'
+CLIENT_ACCESS_TOKEN = ''
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
